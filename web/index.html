@@ -39,7 +39,7 @@
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
-<body>
+<body>  
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
@@ -54,5 +54,26 @@
       });
     });
   </script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+
+<!-- Firebase Configuration -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCevh1lRAAkiewOMvYqSV_2HHxIKRJjviw",
+    authDomain: "myoffice-b8921.firebaseapp.com",
+    projectId: "myoffice-b8921",
+    storageBucket: "myoffice-b8921.appspot.com",
+    messagingSenderId: "299556301726",
+    appId: "1:299556301726:web:dca3ec04bb3c71e6b0c48f",
+    measurementId: "G-PM1PG19B23"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+
 </body>
 </html>

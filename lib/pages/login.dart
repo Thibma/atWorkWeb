@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:my_office_desktop/pages/models/user.dart';
+import 'package:my_office_desktop/models/user.dart';
+import 'package:my_office_desktop/pages/dashboard_admin_page.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_forget_password_login.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_waiting.dart';
 import 'package:my_office_desktop/pages/widgets/textfield_login.dart';
@@ -103,13 +104,10 @@ class HomePage extends StatelessWidget {
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
               ),
             );
-          case ConnectionState.none:
-            return Center(
-              child: Text("User connecté !"),
-            );
           default:
             if (snapshot.hasError) {
-              print(snapshot.error);
+              print(snapshot.data);
+
               return AlertDialog(
                 title: Text('Erreur de connexion'),
                 actions: [
@@ -120,7 +118,14 @@ class HomePage extends StatelessWidget {
                 ],
               );
             } else {
-              return loginPage(context);
+              print(snapshot.data);
+              if (snapshot.data != null) {
+                return Center(
+                  child: Text("User connecté !"),
+                );
+              } else {
+                return loginPage(context);
+              }
             }
         }
       },
@@ -161,10 +166,11 @@ class HomePage extends StatelessWidget {
       final cookieMap = Map.fromEntries(entity);
       print(cookieMap);
 
-      ConnectedUser connectedUser = await Network().login(user.uid);
+      //ConnectedUser connectedUser = await Network().login(user.uid);
 
       // Navigate to dashboard
       Navigator.of(Get.context!).pop();
+      Get.offAll(DashboardAdminPage());
     } catch (err) {
       Navigator.of(Get.context!).pop();
       Get.defaultDialog(

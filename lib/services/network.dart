@@ -1,9 +1,9 @@
-import 'package:my_office_desktop/pages/models/response_model.dart';
+import 'package:my_office_desktop/models/response_model.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
-import 'package:my_office_desktop/pages/models/user.dart';
+import 'package:my_office_desktop/models/user.dart';
 
 class Network {
   // Adresse API

@@ -16,6 +16,7 @@ class Authentication {
       return MapEntry(split[0], split[1]);
     });
     final cookieMap = Map.fromEntries(entity);
+    print(cookieMap);
     if (cookieMap.containsKey("uid")) {
       if (cookieMap["uid"]!.isNotEmpty) {
         return cookieMap["uid"];

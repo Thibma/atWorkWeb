@@ -120,9 +120,7 @@ class HomePage extends StatelessWidget {
             } else {
               print(snapshot.data);
               if (snapshot.data != null) {
-                return Center(
-                  child: Text("User connecté !"),
-                );
+                return DashboardAdminPage();
               } else {
                 return loginPage(context);
               }

@@ -39,6 +39,7 @@ dependencies:
   firebase_auth: ^3.3.19
   get: ^4.6.5
   http: ^0.13.4
+  fluro: ^2.0.3
 
 dev_dependencies:
   flutter_test:

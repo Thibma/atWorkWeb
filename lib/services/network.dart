@@ -1,3 +1,5 @@
+import 'package:my_office_desktop/models/company.dart';
+import 'package:my_office_desktop/models/error.dart';
 import 'package:my_office_desktop/models/response_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -7,21 +9,26 @@ import 'package:my_office_desktop/models/user.dart';
 
 class Network {
   // Adresse API
-  final String address = "http://10.33.3.78:8000";
+  //final String address = "http://10.33.3.78:8000";
+  final String address = "http://vps-e96550d9.vps.ovh.net:8082/";
 
-  final Map<String, String> apiToken = {"api-token": "test"};
+  final Map<String, String> apiToken = {
+    "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8"
+  };
 
   ResponseModel apiResponse(http.Response response) {
+    ResponseModel responseModel =
+        ResponseModel.fromJson(jsonDecode(response.body));
     if (response.statusCode == 202 || response.statusCode == 400) {
-      ResponseModel responseModel =
-          ResponseModel.fromJson(jsonDecode(response.body));
-      if (responseModel.error) {
-        throw (responseModel.message);
+      if (responseModel.errors.isNotEmpty) {
+        print(responseModel.errors[0].error);
+        throw (responseModel.errors[0].error);
       }
 
       return responseModel;
     } else {
-      throw (response.body);
+      print(responseModel.errors[0].error);
+      throw (responseModel.errors[0].error);
     }
   }
 
@@ -32,9 +39,29 @@ class Network {
           .get(Uri.parse(address + "/users/firebase/$uid"), headers: apiToken);
 
       try {
-        return ConnectedUser.fromJson(apiResponse(response).message);
+        return ConnectedUser.fromJson(apiResponse(response).content);
       } catch (e) {
-        throw (apiResponse(response).message);
+        throw (apiResponse(response).content);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Company>> getAllCompany() async {
+    try {
+      final response =
+          await http.get(Uri.parse("${address}company"), headers: apiToken);
+
+      try {
+        var data = apiResponse(response).content;
+        List<Company> list = [];
+        data.forEach((item) {
+          list.add(Company.fromJson(item));
+        });
+        return list;
+      } catch (e) {
+        rethrow;
       }
     } catch (e) {
       rethrow;

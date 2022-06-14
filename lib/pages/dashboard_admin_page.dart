@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:my_office_desktop/models/company.dart';
+import 'package:my_office_desktop/services/network.dart';
 import 'package:my_office_desktop/theme.dart';
 
 class DashboardAdminPage extends StatefulWidget {
@@ -9,6 +12,40 @@ class DashboardAdminPage extends StatefulWidget {
 }
 
 class _DashboardAdminPage extends State<DashboardAdminPage> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Network().getAllCompany(),
+      builder: (context, AsyncSnapshot<List<Company>> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+              ),
+            );
+          default:
+            if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            } else {
+              List<Company> companies = snapshot.requireData;
+              return Home(
+                comp: companies,
+              );
+            }
+        }
+      },
+    );
+  }
+}
+
+class Home extends StatelessWidget {
+  const Home({Key? key, required List<Company> comp})
+      : companies = comp,
+        super(key: key);
+
+  final List<Company> companies;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,15 +84,15 @@ class _DashboardAdminPage extends State<DashboardAdminPage> {
             flex: 5,
             child: SafeArea(
               child: SingleChildScrollView(
-                //padding: EdgeInsets.all(1.0),
+                padding: EdgeInsets.all(10.0),
                 child: Column(
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10.0, left: 25.0, bottom: 10.0),
+                            padding:
+                                const EdgeInsets.only(left: 15.0, bottom: 10.0),
                             child: Text(
                               "Liste des entreprises",
                               style: Theme.of(context).textTheme.headline4,
@@ -68,18 +105,14 @@ class _DashboardAdminPage extends State<DashboardAdminPage> {
                         ),
                       ],
                     ),
-                    Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: CustomTheme.colorTheme,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                      child: Column(
-                        children: [Text("Bonjour")],
-                      ),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 150, crossAxisSpacing: 20),
+                      itemCount: companies.length,
+                      itemBuilder: (BuildContext ctx, index) {
+                        return CompanyCard(companies: companies[index]);
+                      },
                     ),
                   ],
                 ),
@@ -88,6 +121,43 @@ class _DashboardAdminPage extends State<DashboardAdminPage> {
           ),
         ],
       )),
+    );
+  }
+}
+
+class CompanyCard extends StatelessWidget {
+  const CompanyCard({
+    Key? key,
+    required this.companies,
+  }) : super(key: key);
+
+  final Company companies;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {},
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(CustomTheme.colorTheme),
+          shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.domain,
+              size: 80,
+              color: Colors.white,
+            ),
+            Text(
+              companies.name,
+              style: TextStyle(color: Colors.white),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

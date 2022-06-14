@@ -1,16 +1,24 @@
+import 'package:my_office_desktop/models/error.dart';
+
 class ResponseModel {
-  final dynamic message;
-  final bool error;
+  final dynamic content;
+  final List<Error> errors;
 
   const ResponseModel({
-    required this.message,
-    required this.error,
+    required this.content,
+    required this.errors,
   });
 
   factory ResponseModel.fromJson(Map<String, dynamic> json) {
+    var value = json['content'];
+    var error = json['errors'];
+    List<Error> list = [];
+    error.forEach((item) {
+      list.add(Error.fromJson(item));
+    });
     return ResponseModel(
-      message: json['message'],
-      error: json['error'],
+      content: value['value'],
+      errors: list,
     );
   }
 }

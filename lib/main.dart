@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_office_desktop/pages/login.dart';
 import 'package:get/get.dart';
+import 'package:fluro/fluro.dart';
+import 'package:my_office_desktop/routes/application.dart';
+import 'package:my_office_desktop/routes/routes.dart';
 
 const colorTheme = Color(0xFF3f51b5);
 
@@ -9,8 +12,21 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({Key? key}) : super(key: key);
+
+  @override
+  State createState() {
+    return _MyAppState();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  _MyAppState() {
+    final router = FluroRouter();
+    Routes.configureRoutes(router);
+    Application.router = router;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +37,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: 'My Office Dashboard',
-      home: HomePage(),
+      onGenerateRoute: Application.router.generator,
     );
   }
 }

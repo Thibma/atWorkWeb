@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,10 @@ class Authentication {
     required BuildContext context,
   }) async {
     await Firebase.initializeApp();
+    late StreamSubscription<User?> user;
+    user = FirebaseAuth.instance.authStateChanges().listen((users) {
+      print(users);
+    });
 
     final cookie = document.cookie!;
     final entity = cookie.split("; ").map((item) {

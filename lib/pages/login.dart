@@ -1,16 +1,14 @@
+import 'package:fluro/fluro.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:my_office_desktop/models/user.dart';
-import 'package:my_office_desktop/pages/dashboard_admin_page.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_forget_password_login.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_waiting.dart';
 import 'package:my_office_desktop/pages/widgets/textfield_login.dart';
+import 'package:my_office_desktop/routes/application.dart';
 import 'package:my_office_desktop/services/authentication.dart';
-import 'package:my_office_desktop/services/network.dart';
 import 'package:my_office_desktop/theme.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:html';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -20,10 +18,6 @@ class HomePage extends StatelessWidget {
 
   Widget loginPage(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('At Work - Dashboard'),
-        backgroundColor: CustomTheme.colorTheme,
-      ),
       backgroundColor: const Color(0xFFf5f5f5),
       body: Center(
         child: SizedBox(
@@ -94,40 +88,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Authentication.initializeFirebase(context: context),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-              ),
-            );
-          default:
-            if (snapshot.hasError) {
-              print(snapshot.data);
-
-              return AlertDialog(
-                title: Text('Erreur de connexion'),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () => {},
-                    child: Text('Fermer'),
-                  )
-                ],
-              );
-            } else {
-              print(snapshot.data);
-              if (snapshot.data != null) {
-                return DashboardAdminPage();
-              } else {
-                return loginPage(context);
-              }
-            }
-        }
-      },
-    );
+    return loginPage(context);
   }
 
   void signIn() async {
@@ -155,20 +116,11 @@ class HomePage extends StatelessWidget {
         throw ("Impossible de récupérer le User");
       }
 
-      document.cookie = "uid=${user.uid}";
-      final cookie = document.cookie!;
-      final entity = cookie.split("; ").map((item) {
-        final split = item.split("=");
-        return MapEntry(split[0], split[1]);
-      });
-      final cookieMap = Map.fromEntries(entity);
-      print(cookieMap);
-
       //ConnectedUser connectedUser = await Network().login(user.uid);
 
       // Navigate to dashboard
       Navigator.of(Get.context!).pop();
-      Get.offAll(DashboardAdminPage());
+      redirect(user.uid);
     } catch (err) {
       Navigator.of(Get.context!).pop();
       Get.defaultDialog(
@@ -182,5 +134,12 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(color: CustomTheme.colorTheme),
               )));
     }
+  }
+
+  redirect(String id) {
+    Application.router
+        .navigateTo(Get.context!, '/dashboard/$id',
+            transition: TransitionType.none)
+        .then((value) => redirect(id));
   }
 }

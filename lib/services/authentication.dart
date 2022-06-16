@@ -4,29 +4,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:html';
 
 class Authentication {
-  static Future<String?> initializeFirebase({
-    required BuildContext context,
-  }) async {
+  static Future<User?> initializeFirebase() async {
     await Firebase.initializeApp();
-    late StreamSubscription<User?> user;
-    user = FirebaseAuth.instance.authStateChanges().listen((users) {
-      print(users);
-    });
 
-    final cookie = document.cookie!;
-    final entity = cookie.split("; ").map((item) {
-      final split = item.split("=");
-      return MapEntry(split[0], split[1]);
-    });
-    final cookieMap = Map.fromEntries(entity);
-    print(cookieMap);
-    if (cookieMap.containsKey("uid")) {
-      if (cookieMap["uid"]!.isNotEmpty) {
-        return cookieMap["uid"];
-      }
+    final User? user = FirebaseAuth.instance.currentUser;
+    print(user);
+    if (user != null) {
+      return user;
     }
     return null;
   }

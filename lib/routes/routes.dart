@@ -10,8 +10,11 @@ class Routes {
     router.notFoundHandler = Handler(
         handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       print("Route not found!");
+      return ErrorPage();
     });
-    router.define(root, handler: rootHandler);
-    //router.define(dashboard, handler: )
+    router.define(root,
+        handler: rootHandler, transitionType: TransitionType.none);
+    router.define(dashboard,
+        handler: dashboardHandler, transitionType: TransitionType.none);
   }
 }

@@ -4,17 +4,24 @@ import 'package:my_office_desktop/routes/routes_handler.dart';
 
 class Routes {
   static String root = "/";
-  static String dashboard = "/dashboard/:id";
+
+  static String dashboardCompanies = "/dashboard/:id/companies";
+  static String dashboardDemandes = "/dashboard/:id/demandes";
+  static String dashboardProfil = "/dashboard/:id/profil";
 
   static void configureRoutes(FluroRouter router) {
-    router.notFoundHandler = Handler(
-        handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
-      print("Route not found!");
-      return ErrorPage();
-    });
     router.define(root,
         handler: rootHandler, transitionType: TransitionType.none);
-    router.define(dashboard,
-        handler: dashboardHandler, transitionType: TransitionType.none);
+
+    router.define(dashboardCompanies,
+        handler: dashboardCompaniesHandler, transitionType: TransitionType.none);
+    router.define(dashboardDemandes, handler: dashboardDemandesHandler, transitionType: TransitionType.none);
+    router.define(dashboardProfil, handler: dashboardProfileHandler, transitionType: TransitionType.none);
+
+    router.notFoundHandler = Handler(
+        handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+      return ErrorPage();
+    });
+    
   }
 }

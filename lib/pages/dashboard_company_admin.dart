@@ -1,50 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:my_office_desktop/models/company.dart';
 import 'package:my_office_desktop/pages/widgets/drawer_list.dart';
 import 'package:my_office_desktop/pages/widgets/profile_card.dart';
-import 'package:my_office_desktop/theme.dart';
-import 'package:my_office_desktop/services/authentication.dart';
 
+import '../services/authentication.dart';
 
-class DashboardAdminPage extends StatefulWidget {
-  DashboardAdminPage(
-      {Key? key, required Widget finalWidget, required String title})
-      : mainWidget = finalWidget,
-        titleWidget = title,
-        super(key: key);
-
-  final Widget mainWidget;
-  final String titleWidget;
+class MyWidget extends StatefulWidget {
+  const MyWidget({Key? key}) : super(key: key);
 
   @override
-  _DashboardAdminPage createState() => _DashboardAdminPage();
+  State<MyWidget> createState() => _MyWidgetState();
 }
 
-class _DashboardAdminPage extends State<DashboardAdminPage> {
-  late Widget mainWidget;
-  late String titleWidget;
-
-  @override
-  void initState() {
-    mainWidget = widget.mainWidget;
-    titleWidget = widget.titleWidget;
-    super.initState();
-  }
-
+class _MyWidgetState extends State<MyWidget> {
   @override
   Widget build(BuildContext context) {
-    return HomeSuperAdmin(widget: mainWidget, title: titleWidget,);
+    return HomeAdmin();
   }
 }
 
-class HomeSuperAdmin extends StatelessWidget {
-  const HomeSuperAdmin({Key? key, required Widget widget, required String title})
-      : mainWidget = widget,
-      titleWidget = title,
-        super(key: key);
-
-  final Widget mainWidget;
-  final String titleWidget;
+class HomeAdmin extends StatelessWidget {
+  const HomeAdmin({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +58,7 @@ class HomeSuperAdmin extends StatelessWidget {
                     DrawerListTile(
                       title: "Profil",
                       icon: Icons.person,
-                      press: () {Navigator.pushNamed(context,
-                              '/dashboard/${Authentication.getFirebaseUser()?.uid}/profil');},
+                      press: () {},
                     )
                   ],
                 ),
@@ -105,7 +79,7 @@ class HomeSuperAdmin extends StatelessWidget {
                             padding:
                                 const EdgeInsets.only(left: 15.0, bottom: 10.0),
                             child: Text(
-                              titleWidget,
+                              "titleWidget",
                               style: Theme.of(context).textTheme.headline4,
                             )),
                         Spacer(),
@@ -116,10 +90,7 @@ class HomeSuperAdmin extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: mainWidget,
-                    ),
+                    //mainWidget,
                   ],
                 ),
               ),
@@ -130,43 +101,3 @@ class HomeSuperAdmin extends StatelessWidget {
     );
   }
 }
-
-class CompanyCard extends StatelessWidget {
-  const CompanyCard({
-    Key? key,
-    required this.companies,
-  }) : super(key: key);
-
-  final Company companies;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(CustomTheme.colorTheme),
-          shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.domain,
-              size: 80,
-              color: Colors.white,
-            ),
-            Text(
-              companies.name,
-              style: TextStyle(color: Colors.white),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-

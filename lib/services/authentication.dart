@@ -9,12 +9,12 @@ class Authentication {
   static Future<User?> initializeFirebase() async {
     await Firebase.initializeApp();
 
-    final User? user = FirebaseAuth.instance.currentUser;
-    print(user);
-    if (user != null) {
-      return user;
-    }
-    return null;
+    User? user = FirebaseAuth.instance.currentUser;
+    return user ??= await FirebaseAuth.instance.authStateChanges().first;
+  }
+
+  static User? getFirebaseUser() {
+    return FirebaseAuth.instance.currentUser;
   }
 
   static void signUpWithEmailAndPassword(

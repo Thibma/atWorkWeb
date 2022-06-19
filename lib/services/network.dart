@@ -1,5 +1,4 @@
 import 'package:my_office_desktop/models/company.dart';
-import 'package:my_office_desktop/models/error.dart';
 import 'package:my_office_desktop/models/response_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -36,7 +35,7 @@ class Network {
   Future<ConnectedUser> login(String uid) async {
     try {
       final response = await http
-          .get(Uri.parse(address + "/users/firebase/$uid"), headers: apiToken);
+          .get(Uri.parse("$address/users/firebase/$uid"), headers: apiToken);
 
       try {
         return ConnectedUser.fromJson(apiResponse(response).content);

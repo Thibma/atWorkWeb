@@ -1,10 +1,8 @@
-import 'package:fluro/fluro.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_forget_password_login.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_waiting.dart';
-import 'package:my_office_desktop/pages/widgets/textfield_login.dart';
-import 'package:my_office_desktop/routes/application.dart';
+import 'package:my_office_desktop/pages/widgets/textfield.dart';
 import 'package:my_office_desktop/services/authentication.dart';
 import 'package:my_office_desktop/theme.dart';
 import 'package:get/get.dart';
@@ -26,7 +24,7 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              textFieldLogin(
+              TextFieldApp(
                 hint: "Adresse mail",
                 icon: Icons.mail,
                 controller: mailController,
@@ -37,7 +35,7 @@ class HomePage extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  textFieldLogin(
+                  TextFieldApp(
                     hint: "Mot de passe",
                     icon: Icons.lock,
                     obscureText: true,
@@ -120,7 +118,7 @@ class HomePage extends StatelessWidget {
 
       // Navigate to dashboard
       Navigator.of(Get.context!).pop();
-      redirect(user.uid);
+       Navigator.pushNamed(Get.context!, '/dashboard/${user.uid}/companies');
     } catch (err) {
       Navigator.of(Get.context!).pop();
       Get.defaultDialog(
@@ -134,12 +132,5 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(color: CustomTheme.colorTheme),
               )));
     }
-  }
-
-  redirect(String id) {
-    Application.router
-        .navigateTo(Get.context!, '/dashboard/$id',
-            transition: TransitionType.none)
-        .then((value) => redirect(id));
   }
 }

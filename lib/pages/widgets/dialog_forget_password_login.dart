@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_office_desktop/pages/widgets/textfield_login.dart';
+import 'package:my_office_desktop/pages/widgets/textfield.dart';
 import 'package:my_office_desktop/theme.dart';
 
 Widget dialogForgetPassword(BuildContext context) {
@@ -9,7 +9,7 @@ Widget dialogForgetPassword(BuildContext context) {
     title: const Text('Mot de passe oublié ?'),
     content: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: textFieldLogin(
+        child: TextFieldApp(
             hint: "Adresse mail",
             icon: Icons.mail,
             controller: mailEditingController)),

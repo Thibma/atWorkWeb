@@ -1,75 +1,60 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:my_office_desktop/pages/dashboard_admin_page.dart';
+import 'package:my_office_desktop/pages/dashboard_widgets/demandes_list_widget.dart';
+import 'package:my_office_desktop/pages/dashboard_widgets/profile_list_widget.dart';
 import 'package:my_office_desktop/pages/login.dart';
-import 'package:my_office_desktop/routes/application.dart';
 
+import '../pages/dashboard_widgets/companies_list_widget.dart';
 import '../services/authentication.dart';
 
 var rootHandler = Handler(
   handlerFunc: (context, parameters) {
-    return FutureBuilder(
-      future: Authentication.initializeFirebase(),
-      builder: (context, AsyncSnapshot<User?> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-              ),
-            );
-          default:
-            if (snapshot.hasError) {
-              print(snapshot.data);
-
-              return AlertDialog(
-                title: Text('Erreur de connexion'),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () => {},
-                    child: Text('Fermer'),
-                  )
-                ],
-              );
-            } else {
-              if (snapshot.data != null) {
-                Future.delayed(Duration(milliseconds: 0))
-                    .then((value) => redirect(context, snapshot));
-
-                return Container();
-              } else {
-                return HomePage();
-              }
-            }
-        }
-      },
-    );
+    return HomePage();
   },
 );
 
-redirect(BuildContext context, AsyncSnapshot<User?> snapshot) {
-  Application.router
-      .navigateTo(context, "/dashboard/${snapshot.data!.uid}",
-          transition: TransitionType.none)
-      .then((value) => redirect(context, snapshot));
-}
-
-var dashboardHandler = Handler(handlerFunc: (context, parameters) {
+var dashboardCompaniesHandler = Handler(handlerFunc: (context, parameters) {
   String? id = parameters["id"]?.first;
-  if (id == null) {
+  if (id != Authentication.getFirebaseUser()?.uid) {
     return ErrorPage();
   } else {
-    return DashboardAdminPage();
+    CompaniesList widget = CompaniesList();
+    return DashboardAdminPage(finalWidget: widget, title: "Liste des entreprises",);
+  }
+});
+
+var dashboardDemandesHandler = Handler(handlerFunc: (context, parameters) {
+  String? id = parameters["id"]?.first;
+  if (id != Authentication.getFirebaseUser()?.uid) {
+    return ErrorPage();
+  } else {
+    DemandesListWidget widget = DemandesListWidget();
+    return DashboardAdminPage(finalWidget: widget, title: "Demande des clients");
+  }
+});
+
+var dashboardProfileHandler = Handler(handlerFunc: (context, parameters) {
+  String? id = parameters["id"]?.first;
+  if (id != Authentication.getFirebaseUser()?.uid) {
+    return ErrorPage();
+  } else {
+    ProfileListWidget widget = ProfileListWidget();
+    return DashboardAdminPage(finalWidget: widget, title: "Profil administrateur");
   }
 });
 
 class ErrorPage extends StatelessWidget {
+  const ErrorPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text("Une erreur a eu lieu."),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Center(
+          child: Text("Une erreur a eu lieu."),
+        ),
       ),
     );
   }

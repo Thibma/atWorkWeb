@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_office_desktop/services/authentication.dart';
 
 import '../../theme.dart';
 
@@ -35,7 +36,7 @@ class ProfileCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16 / 2),
                 child: Text(
-                  "Thibma",
+                  "${Authentication.connectedUser?.firstname} ${Authentication.connectedUser?.lastname}",
                   style: TextStyle(color: Colors.white),
                 ),
               ),

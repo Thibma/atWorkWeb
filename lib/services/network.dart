@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:my_office_desktop/models/user.dart';
+import 'package:my_office_desktop/services/authentication.dart';
 
 class Network {
   // Adresse API
@@ -12,6 +13,11 @@ class Network {
   final String address = "http://vps-e96550d9.vps.ovh.net:8082/";
 
   final Map<String, String> apiToken = {
+    "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
+    "firebase": Authentication.getFirebaseUser()!.uid
+  };
+
+  final Map<String, String> apiTokenOnly = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8"
   };
 
@@ -32,15 +38,15 @@ class Network {
   }
 
   // SignIn
-  Future<ConnectedUser> login(String uid) async {
+  Future<ConnectedUser?> login(String email) async {
     try {
       final response = await http
-          .get(Uri.parse("$address/users/firebase/$uid"), headers: apiToken);
+          .get(Uri.parse("${address}users/signin/$email"), headers: apiToken);
 
       try {
         return ConnectedUser.fromJson(apiResponse(response).content);
       } catch (e) {
-        throw (apiResponse(response).content);
+        rethrow;
       }
     } catch (e) {
       rethrow;

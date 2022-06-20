@@ -5,14 +5,30 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../models/user.dart';
+import 'network.dart';
+
 class Authentication {
+  static ConnectedUser? connectedUser;
+
   static Future<User?> initializeFirebase() async {
     await Firebase.initializeApp();
 
+    // Initialize User
     User? user = FirebaseAuth.instance.currentUser;
-    return user ??= await FirebaseAuth.instance.authStateChanges().first;
+    if (user == null) {
+      try {
+        user = await FirebaseAuth.instance.authStateChanges().first;
+        connectedUser = await Network().login(user!.email!);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    return user;
   }
 
+  // Get UserFirebase
   static User? getFirebaseUser() {
     return FirebaseAuth.instance.currentUser;
   }

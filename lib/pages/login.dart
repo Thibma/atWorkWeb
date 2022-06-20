@@ -8,6 +8,9 @@ import 'package:my_office_desktop/theme.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/user.dart';
+import '../services/network.dart';
+
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
@@ -114,11 +117,16 @@ class HomePage extends StatelessWidget {
         throw ("Impossible de récupérer le User");
       }
 
-      //ConnectedUser connectedUser = await Network().login(user.uid);
+      ConnectedUser? connectedUser = await Network().login(user.email!);
+      if (connectedUser == null) {
+        throw ("Erreur API pour le USER");
+      }
 
       // Navigate to dashboard
       Navigator.of(Get.context!).pop();
-       Navigator.pushNamed(Get.context!, '/dashboard/${user.uid}/companies');
+      Authentication.connectedUser = connectedUser;
+      Navigator.pushNamed(
+          Get.context!, '/dashboard/${connectedUser.id}/companies');
     } catch (err) {
       Navigator.of(Get.context!).pop();
       Get.defaultDialog(

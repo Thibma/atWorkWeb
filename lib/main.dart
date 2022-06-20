@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:fluro/fluro.dart';
+import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/routes/application.dart';
 import 'package:my_office_desktop/routes/routes.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -10,6 +11,7 @@ import 'package:my_office_desktop/services/authentication.dart';
 
 const colorTheme = Color(0xFF3f51b5);
 User? user;
+String routeAdminOrNot = "";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +20,11 @@ void main() async {
   Routes.configureRoutes(router);
   Application.router = router;
   user = await Authentication.initializeFirebase();
+  if (Authentication.connectedUser?.role == Role.SuperAdmin) {
+    routeAdminOrNot = 'dashboard/${Authentication.connectedUser?.id}/companies';
+  } else {
+    routeAdminOrNot = "/company";
+  }
   print(user);
   runApp(MyApp());
 }
@@ -40,9 +47,9 @@ class _MyAppState extends State<MyApp> {
         primaryColor: colorTheme,
       ),
       debugShowCheckedModeBanner: false,
-      title: 'My Office Dashboard',
+      title: 'At Work',
       onGenerateRoute: Application.router.generator,
-      initialRoute: user == null ? '/' : 'dashboard/${user?.uid}/companies',
+      initialRoute: user == null ? '/' : routeAdminOrNot,
     );
   }
 }

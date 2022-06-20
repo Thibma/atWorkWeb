@@ -5,7 +5,6 @@ import 'package:my_office_desktop/pages/widgets/profile_card.dart';
 import 'package:my_office_desktop/theme.dart';
 import 'package:my_office_desktop/services/authentication.dart';
 
-
 class DashboardAdminPage extends StatefulWidget {
   DashboardAdminPage(
       {Key? key, required Widget finalWidget, required String title})
@@ -33,14 +32,18 @@ class _DashboardAdminPage extends State<DashboardAdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    return HomeSuperAdmin(widget: mainWidget, title: titleWidget,);
+    return HomeSuperAdmin(
+      widget: mainWidget,
+      title: titleWidget,
+    );
   }
 }
 
 class HomeSuperAdmin extends StatelessWidget {
-  const HomeSuperAdmin({Key? key, required Widget widget, required String title})
+  const HomeSuperAdmin(
+      {Key? key, required Widget widget, required String title})
       : mainWidget = widget,
-      titleWidget = title,
+        titleWidget = title,
         super(key: key);
 
   final Widget mainWidget;
@@ -70,7 +73,7 @@ class HomeSuperAdmin extends StatelessWidget {
                       icon: Icons.domain,
                       press: () {
                         Navigator.pushNamed(context,
-                            '/dashboard/${Authentication.getFirebaseUser()?.uid}/companies');
+                            '/dashboard/${Authentication.connectedUser!.id}/companies');
                       },
                     ),
                     DrawerListTile(
@@ -78,13 +81,15 @@ class HomeSuperAdmin extends StatelessWidget {
                         icon: Icons.receipt_long,
                         press: () {
                           Navigator.pushNamed(context,
-                              '/dashboard/${Authentication.getFirebaseUser()?.uid}/demandes');
+                              '/dashboard/${Authentication.connectedUser!.id}/demandes');
                         }),
                     DrawerListTile(
                       title: "Profil",
                       icon: Icons.person,
-                      press: () {Navigator.pushNamed(context,
-                              '/dashboard/${Authentication.getFirebaseUser()?.uid}/profil');},
+                      press: () {
+                        Navigator.pushNamed(context,
+                            '/dashboard/${Authentication.connectedUser!.id}/profil');
+                      },
                     )
                   ],
                 ),
@@ -167,6 +172,3 @@ class CompanyCard extends StatelessWidget {
     );
   }
 }
-
-
-

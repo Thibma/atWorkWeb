@@ -120,7 +120,7 @@ Widget dialogCreateCompany(BuildContext context) {
                           .createCompany(nameEditingController.text, filename);
                       await FirebaseStorage.instance
                           .ref("companiesImages/$filename")
-                          .putBlob(image.value!);
+                          .putData(image.value!, SettableMetadata(contentType: 'image/jpeg'),);
                       Navigator.of(context).pop();
                       Navigator.of(context).pop(true);
                     } catch (e) {

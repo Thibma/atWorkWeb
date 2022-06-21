@@ -17,6 +17,12 @@ class Network {
     "firebase": Authentication.getFirebaseUser()!.uid
   };
 
+  final Map<String, String> apiTokenPost = {
+    "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
+    "firebase": Authentication.getFirebaseUser()!.uid,
+    "Content-Type": "application/json"
+  };
+
   final Map<String, String> apiTokenOnly = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8"
   };
@@ -65,6 +71,60 @@ class Network {
           list.add(Company.fromJson(item));
         });
         return list;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Company>> getUserCompanies(String userId) async {
+    try {
+      final response = await http
+          .get(Uri.parse("${address}company/user/$userId"), headers: apiToken);
+
+      try {
+        var data = apiResponse(response).content;
+        List<Company> list = [];
+        data.forEach((item) {
+          list.add(Company.fromJson(item));
+        });
+        return list;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Company> getCompany(String companyId) async {
+    try {
+      final response = await http.get(Uri.parse("${address}company/$companyId"),
+          headers: apiToken);
+
+      try {
+        return Company.fromJson(apiResponse(response).content);
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Company> createCompany(String name, String image) async {
+    try {
+      final response = await http.post(Uri.parse("${address}company"),
+          headers: apiTokenPost,
+          body: jsonEncode(<String, String>{
+            'name': name,
+            'image': image,
+          }));
+
+      try {
+        return Company.fromJson(apiResponse(response).content);
       } catch (e) {
         rethrow;
       }

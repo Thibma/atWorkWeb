@@ -126,7 +126,7 @@ class HomePage extends StatelessWidget {
       Navigator.of(Get.context!).pop();
       Authentication.connectedUser = connectedUser;
       Navigator.pushNamed(
-          Get.context!, '/dashboard/${connectedUser.id}/companies');
+          Get.context!, 'dashboard/${connectedUser.id}/companies');
     } catch (err) {
       Navigator.of(Get.context!).pop();
       Get.defaultDialog(

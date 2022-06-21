@@ -1,7 +1,5 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:my_office_desktop/pages/company_widgets/units_widget.dart';
-import 'package:my_office_desktop/pages/dashboard_company_admin.dart';
 import 'package:my_office_desktop/routes/routes_handler.dart';
 
 class Routes {
@@ -11,7 +9,7 @@ class Routes {
   static String dashboardDemandes = "/dashboard/:id/demandes";
   static String dashboardProfil = "/dashboard/:id/profil";
 
-  static String companyUnits = "/company";
+  static String companyUnits = "/company/:id/units";
 
   static void configureRoutes(FluroRouter router) {
     router.define(root,
@@ -26,15 +24,11 @@ class Routes {
         handler: dashboardProfileHandler, transitionType: TransitionType.none);
 
     router.define(companyUnits,
-        handler: Handler(handlerFunc: ((context, parameters) {
-      return DashboardCompanies(
-        title: "Liste des unités",
-        finalWidget: UnitsListWidget(),
-      );
-    })));
+        handler: companyUnitsHandler, transitionType: TransitionType.none);
 
     router.notFoundHandler = Handler(
         handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+      print("null");
       return ErrorPage();
     });
   }

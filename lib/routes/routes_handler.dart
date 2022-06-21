@@ -1,13 +1,20 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:my_office_desktop/main.dart';
 import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/pages/dashboard_admin_page.dart';
 import 'package:my_office_desktop/pages/dashboard_widgets/demandes_list_widget.dart';
 import 'package:my_office_desktop/pages/dashboard_widgets/profile_list_widget.dart';
 import 'package:my_office_desktop/pages/login.dart';
+import 'package:my_office_desktop/services/network.dart';
 
+import '../models/company.dart';
+import '../pages/company_widgets/units_widget.dart';
+import '../pages/dashboard_company_admin.dart';
 import '../pages/dashboard_widgets/companies_list_widget.dart';
 import '../services/authentication.dart';
+
+import '../theme.dart';
 
 var rootHandler = Handler(
   handlerFunc: (context, parameters) {
@@ -17,40 +24,71 @@ var rootHandler = Handler(
 
 var dashboardCompaniesHandler = Handler(handlerFunc: (context, parameters) {
   String? id = parameters["id"]?.first;
-  if (!userVerification(Authentication.getFirebaseUser()!.uid, id!)) {
+  if (!userVerificationAdmin(Authentication.getFirebaseUser()!.uid, id!)) {
     return ErrorPage();
   } else {
-    CompaniesList widget = CompaniesList();
     return DashboardAdminPage(
-      finalWidget: widget,
-      title: "Liste des entreprises",
+      mainWidget: CompaniesList(),
+      titleWidget: "Liste des entreprises",
     );
   }
 });
 
 var dashboardDemandesHandler = Handler(handlerFunc: (context, parameters) {
   String? id = parameters["id"]?.first;
-  if (!userVerification(Authentication.getFirebaseUser()!.uid, id!)) {
+  if (!userVerificationAdmin(Authentication.getFirebaseUser()!.uid, id!)) {
     return ErrorPage();
   } else {
-    DemandesListWidget widget = DemandesListWidget();
     return DashboardAdminPage(
-        finalWidget: widget, title: "Demande des clients");
+      mainWidget: DemandesListWidget(),
+      titleWidget: "Demande des clients",
+    );
   }
 });
 
 var dashboardProfileHandler = Handler(handlerFunc: (context, parameters) {
   String? id = parameters["id"]?.first;
-  if (!userVerification(Authentication.getFirebaseUser()!.uid, id!)) {
+  if (!userVerificationAdmin(Authentication.getFirebaseUser()!.uid, id!)) {
     return ErrorPage();
   } else {
-    ProfileListWidget widget = ProfileListWidget();
     return DashboardAdminPage(
-        finalWidget: widget, title: "Profil administrateur");
+      mainWidget: ProfileListWidget(),
+      titleWidget: "Profil administrateur",
+    );
   }
 });
 
-bool userVerification(String firebaseId, String userId) {
+var companyUnitsHandler = Handler(handlerFunc: (context, parameters) {
+  String? id = parameters["id"]?.first;
+  if (id == null) {
+    return ErrorPage();
+  }
+  return FutureBuilder(
+    future: Future.wait([userVerification(id), Network().getCompany(id)]),
+    builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+      if (snapshot.hasData) {
+        if (snapshot.data![0] == false) {
+          return ErrorPage();
+        }
+        return DashboardCompanies(
+          titleWidget: "Liste des unités",
+          mainWidget: UnitsListWidget(),
+          company: snapshot.data![1],
+        );
+      } else if (snapshot.hasError) {
+        return ErrorPage();
+      } else {
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+          ),
+        );
+      }
+    },
+  );
+});
+
+bool userVerificationAdmin(String firebaseId, String userId) {
   if (firebaseId != Authentication.getFirebaseUser()?.uid) {
     return false;
   } else {
@@ -70,16 +108,63 @@ bool userVerification(String firebaseId, String userId) {
   }
 }
 
-class ErrorPage extends StatelessWidget {
+Future<bool> userVerification(String companyId) async {
+  if (Authentication.connectedUser == null) {
+    return false;
+  }
+
+  if (Authentication.connectedUser?.role == Role.SuperAdmin) {
+    return true;
+  }
+
+  final companies =
+      await Network().getUserCompanies(Authentication.connectedUser!.id);
+
+  bool result = false;
+  companies.forEach((element) {
+    if (element.id == companyId) {
+      result = true;
+    }
+  });
+
+  return result;
+}
+
+class ErrorPage extends StatefulWidget {
   const ErrorPage({Key? key}) : super(key: key);
 
   @override
+  State<ErrorPage> createState() => _ErrorPageState();
+}
+
+class _ErrorPageState extends State<ErrorPage> {
+  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        body: Center(
-          child: Text("Une erreur a eu lieu."),
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("Une erreur a eu lieu."),
+            ElevatedButton(
+              onPressed: () {
+                if (Authentication.getFirebaseUser() != null &&
+                    Authentication.connectedUser != null) {
+                  //if (Authentication.connectedUser?.role == Role.SuperAdmin) {
+                  navigatorKey.currentState?.pushReplacementNamed(
+                      "/dashboard/${Authentication.connectedUser?.id}/companies");
+                  //} else {
+                  //navigatorKey.currentState?.pushReplacementNamed("/company");
+                  //}
+                } else {
+                  navigatorKey.currentState?.pushReplacementNamed('/');
+                }
+              },
+              style: ElevatedButton.styleFrom(primary: CustomTheme.colorTheme),
+              child: Text("Cliquez ici pour être redirigé."),
+            )
+          ],
         ),
       ),
     );

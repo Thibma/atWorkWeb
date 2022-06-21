@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:my_office_desktop/pages/dashboard_widgets/dialog_create_company.dart';
 import 'package:my_office_desktop/pages/widgets/textfield.dart';
 import 'package:my_office_desktop/theme.dart';
 import '../../models/company.dart';
 import '../../services/network.dart';
 import '../dashboard_admin_page.dart';
+import 'package:my_office_desktop/pages/widgets/company_card.dart';
 
 class CompaniesList extends StatelessWidget {
   const CompaniesList({
@@ -38,10 +41,12 @@ class CompaniesList extends StatelessWidget {
 class CompaniesListDone extends StatelessWidget {
   CompaniesListDone({
     Key? key,
-    required this.companies,
-  }) : super(key: key);
+    required List<Company> companies,
+  })  : companiesList = RxList(companies),
+        super(key: key);
 
-  final List<Company> companies;
+  //List<Company> companies;
+  RxList<Company> companiesList;
   final searchController = TextEditingController();
 
   @override
@@ -57,7 +62,18 @@ class CompaniesListDone extends StatelessWidget {
                 width: 230,
                 height: 50,
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () async {
+                    var reload = await showDialog(
+                        context: context, builder: dialogCreateCompany);
+                    if (reload != null) {
+                      try {
+                        final companiesReload = await Network().getAllCompany();
+                        companiesList.value = companiesReload;
+                      } catch (e) {
+                        rethrow;
+                      }
+                    }
+                  },
                   label: Text("Créer une entreprise"),
                   icon: Icon(Icons.add),
                   style:
@@ -84,14 +100,18 @@ class CompaniesListDone extends StatelessWidget {
         SizedBox(
           height: 20,
         ),
-        GridView.builder(
-          shrinkWrap: true,
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 150, crossAxisSpacing: 20),
-          itemCount: companies.length,
-          itemBuilder: (BuildContext ctx, index) {
-            return CompanyCard(companies: companies[index]);
-          },
+        Obx(
+          () => GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 180,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20),
+            itemCount: companiesList.length,
+            itemBuilder: (BuildContext ctx, index) {
+              return CompanyCard(companies: companiesList[index]);
+            },
+          ),
         ),
       ],
     );

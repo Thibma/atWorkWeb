@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_office_desktop/models/company.dart';
 import 'package:my_office_desktop/pages/widgets/drawer_list.dart';
 import 'package:my_office_desktop/pages/widgets/profile_card.dart';
 
@@ -6,13 +7,15 @@ import '../services/authentication.dart';
 
 class DashboardCompanies extends StatefulWidget {
   const DashboardCompanies(
-      {Key? key, required Widget finalWidget, required String title})
-      : mainWidget = finalWidget,
-        titleWidget = title,
-        super(key: key);
+      {Key? key,
+      required this.mainWidget,
+      required this.titleWidget,
+      required this.company})
+      : super(key: key);
 
   final Widget mainWidget;
   final String titleWidget;
+  final Company company;
 
   @override
   State<DashboardCompanies> createState() => _MyWidgetState();
@@ -21,31 +24,37 @@ class DashboardCompanies extends StatefulWidget {
 class _MyWidgetState extends State<DashboardCompanies> {
   late Widget mainWidget;
   late String titleWidget;
+  late Company company;
 
   @override
   void initState() {
     mainWidget = widget.mainWidget;
     titleWidget = widget.titleWidget;
+    company = widget.company;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return HomeAdmin(
-      widget: mainWidget,
-      title: titleWidget,
+      mainWidget: mainWidget,
+      titleWidget: titleWidget,
+      company: company,
     );
   }
 }
 
 class HomeAdmin extends StatelessWidget {
-  const HomeAdmin({Key? key, required Widget widget, required String title})
-      : mainWidget = widget,
-        titleWidget = title,
-        super(key: key);
+  const HomeAdmin({
+    Key? key,
+    required this.mainWidget,
+    required this.titleWidget,
+    required this.company,
+  }) : super(key: key);
 
   final Widget mainWidget;
   final String titleWidget;
+  final Company company;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +80,7 @@ class HomeAdmin extends StatelessWidget {
                       icon: Icons.domain,
                       press: () {
                         Navigator.pushNamed(context,
-                            '/company/${Authentication.getFirebaseUser()?.uid}/units');
+                            'company/${Authentication.getFirebaseUser()?.uid}/units');
                       },
                     ),
                     DrawerListTile(
@@ -79,7 +88,7 @@ class HomeAdmin extends StatelessWidget {
                       icon: Icons.group,
                       press: () {
                         Navigator.pushNamed(context,
-                            '/company/${Authentication.getFirebaseUser()?.uid}/users');
+                            'company/${Authentication.getFirebaseUser()?.uid}/users');
                       },
                     ),
                     DrawerListTile(
@@ -87,7 +96,7 @@ class HomeAdmin extends StatelessWidget {
                       icon: Icons.door_front_door,
                       press: () {
                         Navigator.pushNamed(context,
-                            '/company/${Authentication.getFirebaseUser()?.uid}/doors');
+                            'company/${Authentication.getFirebaseUser()?.uid}/doors');
                       },
                     ),
                     DrawerListTile(
@@ -95,7 +104,7 @@ class HomeAdmin extends StatelessWidget {
                       icon: Icons.feed,
                       press: () {
                         Navigator.pushNamed(context,
-                            '/company/${Authentication.getFirebaseUser()?.uid}/posts');
+                            'company/${Authentication.getFirebaseUser()?.uid}/posts');
                       },
                     ),
                     DrawerListTile(
@@ -103,7 +112,7 @@ class HomeAdmin extends StatelessWidget {
                       icon: Icons.event,
                       press: () {
                         Navigator.pushNamed(context,
-                            '/company/${Authentication.getFirebaseUser()?.uid}/posts');
+                            'company/${Authentication.getFirebaseUser()?.uid}/posts');
                       },
                     ),
                   ],
@@ -117,17 +126,18 @@ class HomeAdmin extends StatelessWidget {
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(10.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                            padding:
-                                const EdgeInsets.only(left: 15.0, bottom: 10.0),
-                            child: Text(
-                              titleWidget,
-                              style: Theme.of(context).textTheme.headline4,
-                            )),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            company.name,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
                         Spacer(),
                         Padding(
                           padding: const EdgeInsets.only(
@@ -136,6 +146,13 @@ class HomeAdmin extends StatelessWidget {
                         ),
                       ],
                     ),
+                    Padding(
+                        padding:
+                            const EdgeInsets.only(left: 15.0, bottom: 10.0),
+                        child: Text(
+                          titleWidget,
+                          style: Theme.of(context).textTheme.headline4,
+                        )),
                     mainWidget,
                   ],
                 ),

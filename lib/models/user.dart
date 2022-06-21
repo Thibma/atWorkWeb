@@ -8,30 +8,32 @@ class ConnectedUser {
   final String lastname;
   final String email;
   final Role role;
-  final bool isHere;
-  final String? service;
+  //final bool isHere;
+  //final String? service;
 
-  const ConnectedUser(
-      {required this.id,
-      required this.idFirebase,
-      required this.idImage,
-      required this.firstname,
-      required this.lastname,
-      required this.email,
-      required this.role,
-      required this.isHere,
-      required this.service});
+  const ConnectedUser({
+    required this.id,
+    required this.idFirebase,
+    required this.idImage,
+    required this.firstname,
+    required this.lastname,
+    required this.email,
+    required this.role,
+    //required this.isHere,
+    //required this.service
+  });
 
   factory ConnectedUser.fromJson(Map<String, dynamic> json) {
     return ConnectedUser(
-        id: json["_id"],
-        idFirebase: json["idFirebase"],
-        idImage: json["idImage"],
-        firstname: json["firstname"],
-        lastname: json["lastname"],
-        email: json["email"],
-        role: Role.values.byName(json["role"]),
-        isHere: json["isHere"],
-        service: json["service"]);
+      id: json["_id"],
+      idFirebase: json["idFirebase"],
+      idImage: json["idImage"],
+      firstname: json["firstname"],
+      lastname: json["lastname"],
+      email: json["email"],
+      role: Role.values.byName(json["role"]),
+      //isHere: json["isHere"],
+      //service: json["service"]
+    );
   }
 }

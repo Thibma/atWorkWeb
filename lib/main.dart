@@ -12,10 +12,12 @@ import 'package:my_office_desktop/services/authentication.dart';
 const colorTheme = Color(0xFF3f51b5);
 User? user;
 String routeAdminOrNot = "";
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setUrlStrategy(PathUrlStrategy());
+
+  //setUrlStrategy(PathUrlStrategy());
   final router = FluroRouter();
   Routes.configureRoutes(router);
   Application.router = router;
@@ -23,9 +25,8 @@ void main() async {
   if (Authentication.connectedUser?.role == Role.SuperAdmin) {
     routeAdminOrNot = 'dashboard/${Authentication.connectedUser?.id}/companies';
   } else {
-    routeAdminOrNot = "/company";
+    routeAdminOrNot = "company";
   }
-  print(user);
   runApp(MyApp());
 }
 
@@ -50,6 +51,7 @@ class _MyAppState extends State<MyApp> {
       title: 'At Work',
       onGenerateRoute: Application.router.generator,
       initialRoute: user == null ? '/' : routeAdminOrNot,
+      navigatorKey: navigatorKey,
     );
   }
 }

@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:my_office_desktop/models/company.dart';
 import 'package:my_office_desktop/pages/widgets/drawer_list.dart';
 import 'package:my_office_desktop/pages/widgets/profile_card.dart';
-import 'package:my_office_desktop/theme.dart';
 import 'package:my_office_desktop/services/authentication.dart';
 
 class DashboardAdminPage extends StatefulWidget {
   DashboardAdminPage(
-      {Key? key, required Widget finalWidget, required String title})
-      : mainWidget = finalWidget,
-        titleWidget = title,
-        super(key: key);
+      {Key? key, required this.mainWidget, required this.titleWidget})
+      : super(key: key);
 
   final Widget mainWidget;
   final String titleWidget;
@@ -33,18 +29,16 @@ class _DashboardAdminPage extends State<DashboardAdminPage> {
   @override
   Widget build(BuildContext context) {
     return HomeSuperAdmin(
-      widget: mainWidget,
-      title: titleWidget,
+      mainWidget: mainWidget,
+      titleWidget: titleWidget,
     );
   }
 }
 
 class HomeSuperAdmin extends StatelessWidget {
   const HomeSuperAdmin(
-      {Key? key, required Widget widget, required String title})
-      : mainWidget = widget,
-        titleWidget = title,
-        super(key: key);
+      {Key? key, required this.mainWidget, required this.titleWidget})
+      : super(key: key);
 
   final Widget mainWidget;
   final String titleWidget;
@@ -73,7 +67,7 @@ class HomeSuperAdmin extends StatelessWidget {
                       icon: Icons.domain,
                       press: () {
                         Navigator.pushNamed(context,
-                            '/dashboard/${Authentication.connectedUser!.id}/companies');
+                            'dashboard/${Authentication.connectedUser!.id}/companies');
                       },
                     ),
                     DrawerListTile(
@@ -81,14 +75,14 @@ class HomeSuperAdmin extends StatelessWidget {
                         icon: Icons.receipt_long,
                         press: () {
                           Navigator.pushNamed(context,
-                              '/dashboard/${Authentication.connectedUser!.id}/demandes');
+                              'dashboard/${Authentication.connectedUser!.id}/demandes');
                         }),
                     DrawerListTile(
                       title: "Profil",
                       icon: Icons.person,
                       press: () {
                         Navigator.pushNamed(context,
-                            '/dashboard/${Authentication.connectedUser!.id}/profil');
+                            'dashboard/${Authentication.connectedUser!.id}/profil');
                       },
                     )
                   ],
@@ -132,43 +126,6 @@ class HomeSuperAdmin extends StatelessWidget {
           ),
         ],
       )),
-    );
-  }
-}
-
-class CompanyCard extends StatelessWidget {
-  const CompanyCard({
-    Key? key,
-    required this.companies,
-  }) : super(key: key);
-
-  final Company companies;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(CustomTheme.colorTheme),
-          shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.domain,
-              size: 80,
-              color: Colors.white,
-            ),
-            Text(
-              companies.name,
-              style: TextStyle(color: Colors.white),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

@@ -77,7 +77,7 @@ class HomeAdmin extends StatelessWidget {
                     ),
                     DrawerListTile(
                       title: "Unités",
-                      icon: Icons.domain,
+                      icon: Icons.apartment,
                       press: () {
                         Navigator.pushNamed(context,
                             'company/${Authentication.getFirebaseUser()?.uid}/units');

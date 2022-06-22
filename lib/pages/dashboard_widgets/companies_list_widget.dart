@@ -48,6 +48,14 @@ class CompaniesListDone extends StatelessWidget {
   //List<Company> companies;
   RxList<Company> companiesList;
   final searchController = TextEditingController();
+  RxList<Company> filteredList = RxList();
+
+  void changed(String query) {
+    filteredList.value = companiesList
+        .where((element) =>
+            element.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,10 +97,13 @@ class CompaniesListDone extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: SizedBox(
-                    child: TextFieldApp(
-                        icon: Icons.search,
-                        hint: "Rechercher",
-                        controller: searchController)),
+                  child: TextFieldApp(
+                    icon: Icons.search,
+                    hint: "Rechercher",
+                    controller: searchController,
+                    changed: changed,
+                  ),
+                ),
               ),
             ),
           ],
@@ -107,9 +118,15 @@ class CompaniesListDone extends StatelessWidget {
                 maxCrossAxisExtent: 180,
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20),
-            itemCount: companiesList.length,
+            itemCount: filteredList.isEmpty && searchController.text.isEmpty
+                ? companiesList.length
+                : filteredList.length,
             itemBuilder: (BuildContext ctx, index) {
-              return CompanyCard(companies: companiesList[index]);
+              return CompanyCard(
+                  companies:
+                      filteredList.isEmpty && searchController.text.isEmpty
+                          ? companiesList[index]
+                          : filteredList[index]);
             },
           ),
         ),

@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:my_office_desktop/theme.dart';
 
@@ -7,6 +9,7 @@ class TextFieldApp extends StatelessWidget {
       required this.hint,
       required this.icon,
       this.obscureText = false,
+      this.changed,
       required this.controller})
       : super(key: key);
 
@@ -14,6 +17,7 @@ class TextFieldApp extends StatelessWidget {
   final IconData icon;
   final bool obscureText;
   final TextEditingController controller;
+  final FunctionStringCallback? changed;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +25,7 @@ class TextFieldApp extends StatelessWidget {
       controller: controller,
       cursorColor: CustomTheme.colorTheme,
       obscureText: obscureText,
+      onChanged: changed,
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: Icon(

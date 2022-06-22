@@ -72,7 +72,7 @@ var companyUnitsHandler = Handler(handlerFunc: (context, parameters) {
         }
         return DashboardCompanies(
           titleWidget: "Liste des unités",
-          mainWidget: UnitsListWidget(),
+          mainWidget: UnitsListWidget(company: snapshot.data![1]),
           company: snapshot.data![1],
         );
       } else if (snapshot.hasError) {

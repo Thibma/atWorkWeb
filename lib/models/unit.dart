@@ -6,4 +6,24 @@ class Unit {
   final double altitude;
   final String idCompany;
   final String idAddress;
+
+  Unit(
+      {required this.id,
+      required this.name,
+      required this.latitude,
+      required this.longitude,
+      required this.altitude,
+      required this.idAddress,
+      required this.idCompany});
+
+  factory Unit.fromJson(Map<String, dynamic> json) {
+    return Unit(
+        id: json["_id"],
+        name: json["name"],
+        latitude: json["latitude"],
+        longitude: json["longitude"],
+        altitude: json["altitude"],
+        idAddress: json["address"],
+        idCompany: json["company"]);
+  }
 }

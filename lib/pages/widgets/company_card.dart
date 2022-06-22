@@ -33,13 +33,13 @@ class CompanyCard extends StatelessWidget {
                 if (snapshot.hasData) {
                   return Image.network(
                     snapshot.data.toString(),
-                    width: 80,
-                    height: 80,
+                    width: 120,
+                    height: 120,
                   );
                 } else {
                   return Icon(
                     Icons.domain,
-                    size: 80,
+                    size: 120,
                     color: Colors.white,
                   );
                 }

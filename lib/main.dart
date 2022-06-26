@@ -6,7 +6,6 @@ import 'package:fluro/fluro.dart';
 import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/routes/application.dart';
 import 'package:my_office_desktop/routes/routes.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:my_office_desktop/services/authentication.dart';
 
 const colorTheme = Color(0xFF3f51b5);

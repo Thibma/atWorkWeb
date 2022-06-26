@@ -1,12 +1,17 @@
 import 'package:my_office_desktop/models/company.dart';
+import 'package:my_office_desktop/models/door.dart';
+import 'package:my_office_desktop/models/door_status.dart';
 import 'package:my_office_desktop/models/response_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_office_desktop/models/role.dart';
+import 'package:my_office_desktop/models/service.dart';
 import 'package:my_office_desktop/models/unit.dart';
 
 import 'dart:convert';
 
 import 'package:my_office_desktop/models/user.dart';
 import 'package:my_office_desktop/services/authentication.dart';
+import 'package:my_office_desktop/services/place_api.dart';
 
 class Network {
   // Adresse API
@@ -60,6 +65,31 @@ class Network {
     }
   }
 
+  // Créer un user
+  Future<ConnectedUser> createUser(String firstName, String lastName, String mail, Role role, String idFirebase, String idImage, Service service) async {
+    try {
+      final response = await http.post(Uri.parse("${address}users"),
+          headers: apiTokenPost,
+          body: jsonEncode(<String, dynamic>{
+            'firstname': firstName,
+            'lastname': lastName,
+            'email': mail,
+            'role': role.name,
+            'idFirebase': idFirebase,
+            'idImage': idImage,
+            'services': service.id,
+          }));
+
+      try {
+        return ConnectedUser.fromJson(apiResponse(response).content);
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // Obtenir toutes les entreprises
   Future<List<Company>> getAllCompany() async {
     try {
@@ -71,6 +101,27 @@ class Network {
         List<Company> list = [];
         data.forEach((item) {
           list.add(Company.fromJson(item));
+        });
+        return list;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Obtenir toutes les portes d'une entreprise
+  Future<List<Door>> getCompanyDoors(String companyId) async {
+    try {
+      final response =
+          await http.get(Uri.parse("${address}doors/company/$companyId"), headers: apiToken);
+
+      try {
+        var data = apiResponse(response).content;
+        List<Door> list = [];
+        data.forEach((item) {
+          list.add(Door.fromJson(item));
         });
         return list;
       } catch (e) {
@@ -159,14 +210,39 @@ class Network {
     }
   }
 
-  // Créer une unité
-  Future<Unit> createUnit(String name, String image) async {
+  Future<List<Service>> getUnitService(String unitId) async {
     try {
-      final response = await http.post(Uri.parse("${address}company"),
+      final response = await http.get(
+          Uri.parse("${address}services/unit/$unitId"),
+          headers: apiToken);
+
+      try {
+        var data = apiResponse(response).content;
+        List<Service> list = [];
+        data.forEach((item) {
+          list.add(Service.fromJson(item));
+        });
+        return list;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Créer une unité
+  Future<Unit> createUnit(String name, Place place, String companyId) async {
+    try {
+      final response = await http.post(Uri.parse("${address}units"),
           headers: apiTokenPost,
-          body: jsonEncode(<String, String>{
+          body: jsonEncode(<String, dynamic>{
             'name': name,
-            'image': image,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+            'altitude': 0,
+            'company': companyId,
+            'address': place.street
           }));
 
       try {
@@ -174,6 +250,99 @@ class Network {
       } catch (e) {
         rethrow;
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Créer une unité
+  Future<Door> createDoor(String tag, DoorStatus status, String unitId) async {
+    try {
+      final response = await http.post(Uri.parse("${address}doors"),
+          headers: apiTokenPost,
+          body: jsonEncode(<String, dynamic>{
+            'tag': tag,
+            'status': status.name,
+            'unit': unitId,
+          }));
+
+      try {
+        return Door.fromJson(apiResponse(response).content);
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<ConnectedUser>> getCompanyUsers(String companyId) async {
+    try {
+      final response = await http.get(
+          Uri.parse("${address}users/company/$companyId"),
+          headers: apiToken);
+
+      try {
+        var data = apiResponse(response).content;
+        List<ConnectedUser> list = [];
+        data.forEach((item) {
+          list.add(ConnectedUser.fromJson(item));
+        });
+        return list;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Suggestion>> getAutocompletePlaces(
+      String input, String sessionToken) async {
+    try {
+      final response = await http.get(
+          Uri.parse(
+              "${address}firebase/place?input=$input&sessionToken=$sessionToken"),
+          headers: apiToken);
+
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+        if (result['status'] == 'OK') {
+          final googleResponse = GoogleMapsResponsePrediction.fromJson(result);
+          List<Suggestion> suggestions = [];
+          googleResponse.predictions.forEach((element) {
+            suggestions
+                .add(Suggestion(element["place_id"], element["description"]));
+          });
+          return suggestions;
+        }
+        if (result['status'] == 'ZERO_RESULTS') {
+          return [];
+        }
+      }
+
+      throw Exception('Failed to fetch suggestion');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Place> getDetailPlace(String placeId, String sessionToken) async {
+    try {
+      final response = await http.get(
+          Uri.parse(
+              "${address}firebase/placedetails?placeId=$placeId&sessionToken=$sessionToken"),
+          headers: apiToken);
+
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+        if (result['status'] == 'OK') {
+          final googleResponse = GoogleMapsResponseDetail.fromJson(result);
+          return Place.fromJson(googleResponse.result);
+        }
+      }
+
+      throw Exception('Failed to fetch suggestion');
     } catch (e) {
       rethrow;
     }

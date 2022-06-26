@@ -1,4 +1,5 @@
 import 'package:my_office_desktop/models/role.dart';
+import 'package:my_office_desktop/models/service.dart';
 
 class ConnectedUser {
   final String id;
@@ -8,6 +9,7 @@ class ConnectedUser {
   final String lastname;
   final String email;
   final Role role;
+  final List<Service> services;
   //final bool isHere;
   //final String? service;
 
@@ -19,11 +21,27 @@ class ConnectedUser {
     required this.lastname,
     required this.email,
     required this.role,
+    required this.services,
     //required this.isHere,
     //required this.service
   });
 
+  String serviceNames() {
+    String result = "";
+
+    services.forEach((element) {
+      result += "${element.name} ";
+    });
+
+    return result == "" ? "Aucun services" : result;
+  }
+
   factory ConnectedUser.fromJson(Map<String, dynamic> json) {
+    List<Service> resultServices = [];
+    var resultData = json["services"];
+    resultData.forEach((element) {
+      resultServices.add(Service.fromJson(element));
+    });
     return ConnectedUser(
       id: json["_id"],
       idFirebase: json["idFirebase"],
@@ -32,6 +50,7 @@ class ConnectedUser {
       lastname: json["lastname"],
       email: json["email"],
       role: Role.values.byName(json["role"]),
+      services: resultServices,
       //isHere: json["isHere"],
       //service: json["service"]
     );

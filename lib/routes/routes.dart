@@ -10,6 +10,10 @@ class Routes {
   static String dashboardProfil = "/dashboard/:id/profil";
 
   static String companyUnits = "/company/:id/units";
+  static String companyUsers = "/company/:id/users";
+  static String companyDoors = "/company/:id/doors";
+  static String companyPosts = "/company/:id/posts";
+  static String companyEvents = "/company/:id/events";
 
   static void configureRoutes(FluroRouter router) {
     router.define(root,
@@ -25,6 +29,14 @@ class Routes {
 
     router.define(companyUnits,
         handler: companyUnitsHandler, transitionType: TransitionType.none);
+    router.define(companyUsers,
+        handler: companyUsersHandler, transitionType: TransitionType.none);
+    router.define(companyDoors,
+        handler: companyDoorsHandler, transitionType: TransitionType.none);
+    router.define(companyPosts,
+        handler: companyPostsHandler, transitionType: TransitionType.none);
+    router.define(companyEvents,
+        handler: companyEventHandler, transitionType: TransitionType.none);
 
     router.notFoundHandler = Handler(
         handlerFunc: (BuildContext? context, Map<String, List<String>> params) {

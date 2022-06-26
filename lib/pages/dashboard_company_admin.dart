@@ -80,7 +80,7 @@ class HomeAdmin extends StatelessWidget {
                       icon: Icons.apartment,
                       press: () {
                         Navigator.pushNamed(context,
-                            'company/${Authentication.getFirebaseUser()?.uid}/units');
+                            'company/${company.id}/units');
                       },
                     ),
                     DrawerListTile(
@@ -88,7 +88,7 @@ class HomeAdmin extends StatelessWidget {
                       icon: Icons.group,
                       press: () {
                         Navigator.pushNamed(context,
-                            'company/${Authentication.getFirebaseUser()?.uid}/users');
+                            'company/${company.id}/users');
                       },
                     ),
                     DrawerListTile(
@@ -96,23 +96,7 @@ class HomeAdmin extends StatelessWidget {
                       icon: Icons.door_front_door,
                       press: () {
                         Navigator.pushNamed(context,
-                            'company/${Authentication.getFirebaseUser()?.uid}/doors');
-                      },
-                    ),
-                    DrawerListTile(
-                      title: "Modération des posts",
-                      icon: Icons.feed,
-                      press: () {
-                        Navigator.pushNamed(context,
-                            'company/${Authentication.getFirebaseUser()?.uid}/posts');
-                      },
-                    ),
-                    DrawerListTile(
-                      title: "Gestion des évènements",
-                      icon: Icons.event,
-                      press: () {
-                        Navigator.pushNamed(context,
-                            'company/${Authentication.getFirebaseUser()?.uid}/posts');
+                            'company/${company.id}/doors');
                       },
                     ),
                   ],
@@ -135,7 +119,7 @@ class HomeAdmin extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             company.name,
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ),
                         Spacer(),

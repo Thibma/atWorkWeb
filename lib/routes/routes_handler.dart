@@ -9,7 +9,11 @@ import 'package:my_office_desktop/pages/login.dart';
 import 'package:my_office_desktop/services/network.dart';
 
 import '../models/company.dart';
+import '../pages/company_widgets/doors_widget.dart';
+import '../pages/company_widgets/events_widget.dart';
+import '../pages/company_widgets/posts_widget.dart';
 import '../pages/company_widgets/units_widget.dart';
+import '../pages/company_widgets/users_widget.dart';
 import '../pages/dashboard_company_admin.dart';
 import '../pages/dashboard_widgets/companies_list_widget.dart';
 import '../services/authentication.dart';
@@ -73,6 +77,126 @@ var companyUnitsHandler = Handler(handlerFunc: (context, parameters) {
         return DashboardCompanies(
           titleWidget: "Liste des unités",
           mainWidget: UnitsListWidget(company: snapshot.data![1]),
+          company: snapshot.data![1],
+        );
+      } else if (snapshot.hasError) {
+        return ErrorPage();
+      } else {
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+          ),
+        );
+      }
+    },
+  );
+});
+
+var companyUsersHandler = Handler(handlerFunc: (context, parameters) {
+  String? id = parameters["id"]?.first;
+  if (id == null) {
+    return ErrorPage();
+  }
+  return FutureBuilder(
+    future: Future.wait([userVerification(id), Network().getCompany(id)]),
+    builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+      if (snapshot.hasData) {
+        if (snapshot.data![0] == false) {
+          return ErrorPage();
+        }
+        return DashboardCompanies(
+          titleWidget: "Liste des utilisateurs",
+          mainWidget: UsersListWidget(company: snapshot.data![1]),
+          company: snapshot.data![1],
+        );
+      } else if (snapshot.hasError) {
+        return ErrorPage();
+      } else {
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+          ),
+        );
+      }
+    },
+  );
+});
+
+var companyDoorsHandler = Handler(handlerFunc: (context, parameters) {
+  String? id = parameters["id"]?.first;
+  if (id == null) {
+    return ErrorPage();
+  }
+  return FutureBuilder(
+    future: Future.wait([userVerification(id), Network().getCompany(id)]),
+    builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+      if (snapshot.hasData) {
+        if (snapshot.data![0] == false) {
+          return ErrorPage();
+        }
+        return DashboardCompanies(
+          titleWidget: "Liste des portes connectées",
+          mainWidget: DoorsListWidget(company: snapshot.data![1]),
+          company: snapshot.data![1],
+        );
+      } else if (snapshot.hasError) {
+        return ErrorPage();
+      } else {
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+          ),
+        );
+      }
+    },
+  );
+});
+
+var companyPostsHandler = Handler(handlerFunc: (context, parameters) {
+  String? id = parameters["id"]?.first;
+  if (id == null) {
+    return ErrorPage();
+  }
+  return FutureBuilder(
+    future: Future.wait([userVerification(id), Network().getCompany(id)]),
+    builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+      if (snapshot.hasData) {
+        if (snapshot.data![0] == false) {
+          return ErrorPage();
+        }
+        return DashboardCompanies(
+          titleWidget: "Liste des posts",
+          mainWidget: PostsListWidget(company: snapshot.data![1]),
+          company: snapshot.data![1],
+        );
+      } else if (snapshot.hasError) {
+        return ErrorPage();
+      } else {
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+          ),
+        );
+      }
+    },
+  );
+});
+
+var companyEventHandler = Handler(handlerFunc: (context, parameters) {
+  String? id = parameters["id"]?.first;
+  if (id == null) {
+    return ErrorPage();
+  }
+  return FutureBuilder(
+    future: Future.wait([userVerification(id), Network().getCompany(id)]),
+    builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+      if (snapshot.hasData) {
+        if (snapshot.data![0] == false) {
+          return ErrorPage();
+        }
+        return DashboardCompanies(
+          titleWidget: "Liste des évènements",
+          mainWidget: EventsListWidget(company: snapshot.data![1]),
           company: snapshot.data![1],
         );
       } else if (snapshot.hasError) {

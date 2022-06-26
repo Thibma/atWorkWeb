@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:my_office_desktop/theme.dart';
 
+import '../../models/company.dart';
 import '../../models/unit.dart';
 
 class UnitCard extends StatelessWidget {
   const UnitCard({
     Key? key,
     required this.unit,
+    required this.company,
   }) : super(key: key);
 
   final Unit unit;
+  final Company company;
 
   @override
   Widget build(BuildContext context) {

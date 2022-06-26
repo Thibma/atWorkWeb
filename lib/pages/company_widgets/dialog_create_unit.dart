@@ -11,9 +11,12 @@ import 'package:get/get.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../models/company.dart';
 import '../../services/place_api.dart';
 
-Widget dialogCreateUnit(BuildContext context) {
+class DialogCreateUnit extends StatelessWidget {
+  DialogCreateUnit({Key? key, required this.company}) : super(key: key);
+
   final TextEditingController nameEditingController = TextEditingController();
   final TextEditingController addressEditionController =
       TextEditingController();
@@ -22,12 +25,16 @@ Widget dialogCreateUnit(BuildContext context) {
   final sessionToken = Uuid().v4();
   String selectedPlaceId = "";
 
+  final Company company;
+
   void changed(String search) {
     query.value = search;
     print(query.value);
   }
 
-  return Dialog(
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
     insetPadding: EdgeInsets.all(10),
     child: Column(
       mainAxisSize: MainAxisSize.min,
@@ -61,8 +68,7 @@ Widget dialogCreateUnit(BuildContext context) {
                 ),
                 Obx(
                   () => FutureBuilder(
-                    future: PlaceApiProvider(sessionToken)
-                        .fetchSuggestions(query.value),
+                    future: Network().getAutocompletePlaces(query.value, sessionToken),
                     builder: (context,
                             AsyncSnapshot<List<Suggestion>> snapshot) =>
                         query.value == ''
@@ -129,8 +135,10 @@ Widget dialogCreateUnit(BuildContext context) {
                         try {
                           // await Network()
                           // .createUnit(nameEditingController.text, filename);
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop(true);
+                          Place place = await Network().getDetailPlace(selectedPlaceId, sessionToken);
+                          await Network().createUnit(nameEditingController.text, place, company.id);
+                          Get.back();
+                          Get.back(result: true);
                         } catch (e) {
                           Navigator.pop(context);
                           Get.defaultDialog(
@@ -164,4 +172,5 @@ Widget dialogCreateUnit(BuildContext context) {
       ],
     ),
   );
+  }
 }

@@ -10,9 +10,10 @@ import 'network.dart';
 
 class Authentication {
   static ConnectedUser? connectedUser;
+  static FirebaseApp? firebaseApp;
 
   static Future<User?> initializeFirebase() async {
-    await Firebase.initializeApp();
+    firebaseApp = await Firebase.initializeApp();
 
     // Initialize User
     User? user = FirebaseAuth.instance.currentUser;
@@ -33,19 +34,19 @@ class Authentication {
     return FirebaseAuth.instance.currentUser;
   }
 
-  static void signUpWithEmailAndPassword(
+  static Future<User?> signUpWithEmailAndPassword(
       String email, String password, BuildContext context) async {
+        FirebaseApp app = await Firebase.initializeApp(
+          name: 'Secondary', options: Firebase.app().options);
     try {
-      await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) {
-        Navigator.pop(context);
-        Get.snackbar(
-            "Inscription complétée", "Vous pouvez désormais vous connecter.",
-            backgroundColor: Colors.white);
-        return;
-      });
+      
+      final userCredential = await FirebaseAuth.instanceFor(app: app)
+          .createUserWithEmailAndPassword(email: email, password: password);
+      await app.delete();
+
+      return userCredential.user;
     } on FirebaseAuthException catch (e) {
+      await app.delete();
       if (e.code == 'weak-password') {
         throw ("Mot de passe trop faible");
       } else if (e.code == 'email-already-in-use') {

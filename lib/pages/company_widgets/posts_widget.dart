@@ -9,16 +9,16 @@ import '../../services/network.dart';
 import '../../theme.dart';
 import '../widgets/textfield.dart';
 
-class UnitsListWidget extends StatefulWidget {
-  const UnitsListWidget({Key? key, required this.company}) : super(key: key);
+class PostsListWidget extends StatefulWidget {
+  const PostsListWidget({Key? key, required this.company}) : super(key: key);
 
   final Company company;
 
   @override
-  State<UnitsListWidget> createState() => _ProfiUnitsidgetState();
+  State<PostsListWidget> createState() => _ProfiUnitsidgetState();
 }
 
-class _ProfiUnitsidgetState extends State<UnitsListWidget> {
+class _ProfiUnitsidgetState extends State<PostsListWidget> {
   late Company company;
 
   @override
@@ -86,9 +86,7 @@ class UnitListDone extends StatelessWidget {
                 height: 50,
                 child: ElevatedButton.icon(
                   onPressed: () async {
-                    var reload = await Get.dialog(DialogCreateUnit(
-                      company: company,
-                    ));
+                    var reload = Get.dialog(DialogCreateUnit(company: company,));
                     if (reload != null) {
                       try {
                         final unitReload =
@@ -140,11 +138,10 @@ class UnitListDone extends StatelessWidget {
                 : filteredList.length,
             itemBuilder: (BuildContext ctx, index) {
               return UnitCard(
-                unit: filteredList.isEmpty && searchController.text.isEmpty
-                    ? unitList[index]
-                    : filteredList[index],
-                company: company,
-              );
+                  unit: filteredList.isEmpty && searchController.text.isEmpty
+                      ? unitList[index]
+                      : filteredList[index],
+                company: company,);
             },
           ),
         ),

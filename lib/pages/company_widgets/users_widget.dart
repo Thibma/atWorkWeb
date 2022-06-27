@@ -166,7 +166,7 @@ class UserListDone extends StatelessWidget {
                               DataCell(Text(element.email)),
                               DataCell(Text(element.idFirebase)),
                               DataCell(Text(element.role.name)),
-                              DataCell(Text(element.serviceNames())),
+                              DataCell(Text(element.services.first.name)),
                               DataCell(
                                 ElevatedButton(
                                   onPressed: () {},

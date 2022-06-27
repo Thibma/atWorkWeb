@@ -10,8 +10,6 @@ import 'package:my_office_desktop/services/network.dart';
 
 import '../models/company.dart';
 import '../pages/company_widgets/doors_widget.dart';
-import '../pages/company_widgets/events_widget.dart';
-import '../pages/company_widgets/posts_widget.dart';
 import '../pages/company_widgets/units_widget.dart';
 import '../pages/company_widgets/users_widget.dart';
 import '../pages/dashboard_company_admin.dart';
@@ -28,7 +26,11 @@ var rootHandler = Handler(
 
 var dashboardCompaniesHandler = Handler(handlerFunc: (context, parameters) {
   String? id = parameters["id"]?.first;
-  if (!userVerificationAdmin(Authentication.getFirebaseUser()!.uid, id!)) {
+  if (Authentication.getFirebaseUser() == null) {
+    return ErrorPage();
+  }
+  if (!userVerificationAdmin(Authentication.getFirebaseUser()!.uid, id!) ||
+      Authentication.connectedUser == null) {
     return ErrorPage();
   } else {
     return DashboardAdminPage(
@@ -40,7 +42,11 @@ var dashboardCompaniesHandler = Handler(handlerFunc: (context, parameters) {
 
 var dashboardDemandesHandler = Handler(handlerFunc: (context, parameters) {
   String? id = parameters["id"]?.first;
-  if (!userVerificationAdmin(Authentication.getFirebaseUser()!.uid, id!)) {
+  if (Authentication.getFirebaseUser() == null) {
+    return ErrorPage();
+  }
+  if (!userVerificationAdmin(Authentication.getFirebaseUser()!.uid, id!) ||
+      Authentication.connectedUser == null) {
     return ErrorPage();
   } else {
     return DashboardAdminPage(
@@ -52,7 +58,11 @@ var dashboardDemandesHandler = Handler(handlerFunc: (context, parameters) {
 
 var dashboardProfileHandler = Handler(handlerFunc: (context, parameters) {
   String? id = parameters["id"]?.first;
-  if (!userVerificationAdmin(Authentication.getFirebaseUser()!.uid, id!)) {
+  if (Authentication.getFirebaseUser() == null) {
+    return ErrorPage();
+  }
+  if (!userVerificationAdmin(Authentication.getFirebaseUser()!.uid, id!) ||
+      Authentication.connectedUser == null) {
     return ErrorPage();
   } else {
     return DashboardAdminPage(
@@ -65,6 +75,9 @@ var dashboardProfileHandler = Handler(handlerFunc: (context, parameters) {
 var companyUnitsHandler = Handler(handlerFunc: (context, parameters) {
   String? id = parameters["id"]?.first;
   if (id == null) {
+    return ErrorPage();
+  }
+  if (Authentication.getFirebaseUser() == null) {
     return ErrorPage();
   }
   return FutureBuilder(
@@ -97,6 +110,9 @@ var companyUsersHandler = Handler(handlerFunc: (context, parameters) {
   if (id == null) {
     return ErrorPage();
   }
+  if (Authentication.getFirebaseUser() == null) {
+    return ErrorPage();
+  }
   return FutureBuilder(
     future: Future.wait([userVerification(id), Network().getCompany(id)]),
     builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -127,6 +143,9 @@ var companyDoorsHandler = Handler(handlerFunc: (context, parameters) {
   if (id == null) {
     return ErrorPage();
   }
+  if (Authentication.getFirebaseUser() == null) {
+    return ErrorPage();
+  }
   return FutureBuilder(
     future: Future.wait([userVerification(id), Network().getCompany(id)]),
     builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -137,66 +156,6 @@ var companyDoorsHandler = Handler(handlerFunc: (context, parameters) {
         return DashboardCompanies(
           titleWidget: "Liste des portes connectées",
           mainWidget: DoorsListWidget(company: snapshot.data![1]),
-          company: snapshot.data![1],
-        );
-      } else if (snapshot.hasError) {
-        return ErrorPage();
-      } else {
-        return Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-          ),
-        );
-      }
-    },
-  );
-});
-
-var companyPostsHandler = Handler(handlerFunc: (context, parameters) {
-  String? id = parameters["id"]?.first;
-  if (id == null) {
-    return ErrorPage();
-  }
-  return FutureBuilder(
-    future: Future.wait([userVerification(id), Network().getCompany(id)]),
-    builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-      if (snapshot.hasData) {
-        if (snapshot.data![0] == false) {
-          return ErrorPage();
-        }
-        return DashboardCompanies(
-          titleWidget: "Liste des posts",
-          mainWidget: PostsListWidget(company: snapshot.data![1]),
-          company: snapshot.data![1],
-        );
-      } else if (snapshot.hasError) {
-        return ErrorPage();
-      } else {
-        return Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-          ),
-        );
-      }
-    },
-  );
-});
-
-var companyEventHandler = Handler(handlerFunc: (context, parameters) {
-  String? id = parameters["id"]?.first;
-  if (id == null) {
-    return ErrorPage();
-  }
-  return FutureBuilder(
-    future: Future.wait([userVerification(id), Network().getCompany(id)]),
-    builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-      if (snapshot.hasData) {
-        if (snapshot.data![0] == false) {
-          return ErrorPage();
-        }
-        return DashboardCompanies(
-          titleWidget: "Liste des évènements",
-          mainWidget: EventsListWidget(company: snapshot.data![1]),
           company: snapshot.data![1],
         );
       } else if (snapshot.hasError) {
@@ -272,15 +231,16 @@ class _ErrorPageState extends State<ErrorPage> {
           children: [
             Text("Une erreur a eu lieu."),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (Authentication.getFirebaseUser() != null &&
                     Authentication.connectedUser != null) {
-                  //if (Authentication.connectedUser?.role == Role.SuperAdmin) {
-                  navigatorKey.currentState?.pushReplacementNamed(
-                      "/dashboard/${Authentication.connectedUser?.id}/companies");
-                  //} else {
-                  //navigatorKey.currentState?.pushReplacementNamed("/company");
-                  //}
+                  if (Authentication.connectedUser?.role == Role.SuperAdmin) {
+                    navigatorKey.currentState?.pushReplacementNamed(
+                        "/dashboard/${Authentication.connectedUser?.id}/companies");
+                  } else {
+                    List<Company> company = await Network().getUserCompanies(Authentication.connectedUser!.id);
+                    navigatorKey.currentState?.pushReplacementNamed("/company/${company.first.id}/units");
+                  }
                 } else {
                   navigatorKey.currentState?.pushReplacementNamed('/');
                 }

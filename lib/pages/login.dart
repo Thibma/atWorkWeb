@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_forget_password_login.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_waiting.dart';
 import 'package:my_office_desktop/pages/widgets/textfield.dart';
@@ -8,6 +9,7 @@ import 'package:my_office_desktop/theme.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/company.dart';
 import '../models/user.dart';
 import '../services/network.dart';
 
@@ -125,8 +127,17 @@ class HomePage extends StatelessWidget {
       // Navigate to dashboard
       Navigator.of(Get.context!).pop();
       Authentication.connectedUser = connectedUser;
-      Navigator.pushNamed(
+      if (connectedUser.role == Role.SuperAdmin) {
+        Navigator.pushNamed(
           Get.context!, 'dashboard/${connectedUser.id}/companies');
+      }
+      else if (connectedUser.role == Role.Administrateur) {
+        List<Company> company = await Network().getUserCompanies(Authentication.connectedUser!.id);
+        Navigator.pushNamed(Get.context!, "/company/${company.first.id}/units");
+      }
+      else {
+        throw ("Vous n'avez pas les privilèges pour accéder à ce site.");
+      }
     } catch (err) {
       Navigator.of(Get.context!).pop();
       Get.defaultDialog(

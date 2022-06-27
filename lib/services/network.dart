@@ -90,6 +90,39 @@ class Network {
     }
   }
 
+  Future<ConnectedUser> editUser(String? firstName, String? lastName, Role? role, String? idImage, Service? service) async {
+    Map<String, dynamic> body = {};
+
+    if (firstName != null) {
+      body["firstname"] = firstName;
+    }
+    if (lastName != null) {
+      body["lastname"] = firstName;
+    }
+    if (role != null) {
+      body["role"] = role.name;
+    }
+    if (idImage != null) {
+      body["idImage"] = idImage;
+    }
+    if (service != null) {
+      body["services"] = service.id;
+    }
+    try {
+      final response = await http.post(Uri.parse("${address}users"),
+          headers: apiTokenPost,
+          body: jsonEncode(body));
+
+      try {
+        return ConnectedUser.fromJson(apiResponse(response).content);
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // Obtenir toutes les entreprises
   Future<List<Company>> getAllCompany() async {
     try {
@@ -189,6 +222,26 @@ class Network {
     }
   }
 
+  // Créer un service
+  Future<Service> createService(String name, String idUnit) async {
+    try {
+      final response = await http.post(Uri.parse("${address}services"),
+          headers: apiTokenPost,
+          body: jsonEncode(<String, String>{
+            'name': name,
+            'unit': idUnit,
+          }));
+
+      try {
+        return Service.fromJson(apiResponse(response).content);
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<Unit>> getCompanyUnits(String companyId) async {
     try {
       final response = await http.get(
@@ -255,6 +308,35 @@ class Network {
     }
   }
 
+  // Modifier une unité
+  Future<Unit> editUnit(String unitId, String? name, Place? place) async {
+    Map<String, dynamic> body = {};
+    if (name != null) {
+      body["name"] = name;
+    }
+    if (place != null) {
+      body["latitude"] = place.latitude;
+      body["longitude"] = place.longitude;
+      body["address"] = place.street;
+    }
+    try {
+      final response = await http.put(Uri.parse("${address}units/$unitId"),
+          headers: apiTokenPost,
+          body: jsonEncode(body));
+
+      try {
+        return Unit.fromJson(apiResponse(response).content);
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  
+
+
   // Créer une unité
   Future<Door> createDoor(String tag, DoorStatus status, String unitId) async {
     try {
@@ -280,6 +362,27 @@ class Network {
     try {
       final response = await http.get(
           Uri.parse("${address}users/company/$companyId"),
+          headers: apiToken);
+
+      try {
+        var data = apiResponse(response).content;
+        List<ConnectedUser> list = [];
+        data.forEach((item) {
+          list.add(ConnectedUser.fromJson(item));
+        });
+        return list;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<ConnectedUser>> getUnitsUsers(String unitId) async {
+    try {
+      final response = await http.get(
+          Uri.parse("${address}users/unit/$unitId"),
           headers: apiToken);
 
       try {
@@ -344,6 +447,45 @@ class Network {
 
       throw Exception('Failed to fetch suggestion');
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteService(String idService) async {
+    try {
+      final response = await http.delete(Uri.parse("${address}services/$idService"),
+      headers: apiToken);
+
+      try {
+        return apiResponse(response).content;
+      } catch (e) {
+        rethrow;
+      }
+    }
+    catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteUnit(String idUnit) async {
+    try {
+
+      final List<ConnectedUser> userList = await getUnitsUsers(idUnit);
+
+      if (userList.isNotEmpty) {
+        throw("Impossible de supprimer la liste, il faut qu'il n'y ai plus un seul collaborateur pour supprimer l'unité.");
+      }
+
+      final response = await http.delete(Uri.parse("${address}units/$idUnit"),
+      headers: apiToken);
+
+      try {
+        return apiResponse(response).content;
+      } catch (e) {
+        rethrow;
+      }
+    }
+    catch (e) {
       rethrow;
     }
   }

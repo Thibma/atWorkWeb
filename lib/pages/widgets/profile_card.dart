@@ -49,13 +49,19 @@ class ProfileCard extends StatelessWidget {
             ),
             itemBuilder: (context) => [
                   PopupMenuItem(
+                    onTap: () async {
+                      await Authentication.signOut();
+                      // ignore: use_build_context_synchronously
+                      Navigator.popAndPushNamed(context,
+                            '/');
+                    },
                     child: Row(
                       children: [
-                        Icon(Icons.power_settings_new),
+                        Icon(Icons.power_settings_new, color: Colors.red,),
                         SizedBox(width: 10,),
                         Text(
                           "Déconnexion",
-                          style: TextStyle(),
+                          style: TextStyle(color: Colors.red),
                         ),
                       ],
                     ),

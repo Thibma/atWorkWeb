@@ -69,4 +69,14 @@ class Authentication {
     }
     return user;
   }
+
+  static Future<void> signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      connectedUser = null;
+    }
+    catch(e) {
+      rethrow;
+    }
+  }
 }

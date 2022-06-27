@@ -33,10 +33,6 @@ class Routes {
         handler: companyUsersHandler, transitionType: TransitionType.none);
     router.define(companyDoors,
         handler: companyDoorsHandler, transitionType: TransitionType.none);
-    router.define(companyPosts,
-        handler: companyPostsHandler, transitionType: TransitionType.none);
-    router.define(companyEvents,
-        handler: companyEventHandler, transitionType: TransitionType.none);
 
     router.notFoundHandler = Handler(
         handlerFunc: (BuildContext? context, Map<String, List<String>> params) {

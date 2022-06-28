@@ -26,8 +26,11 @@ void main() async {
   if (Authentication.connectedUser?.role == Role.SuperAdmin) {
     routeAdminOrNot = 'dashboard/${Authentication.connectedUser?.id}/companies';
   } else if (Authentication.connectedUser?.role == Role.Administrateur) {
-    List<Company> company = await Network().getUserCompanies(Authentication.connectedUser!.id);
+    List<Company> company =
+        await Network().getUserCompanies(Authentication.connectedUser!.id);
     routeAdminOrNot = "/company/${company.first.id}/units";
+  } else {
+    routeAdminOrNot = '/';
   }
   runApp(MyApp());
 }

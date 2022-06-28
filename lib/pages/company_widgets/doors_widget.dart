@@ -4,11 +4,13 @@ import 'package:my_office_desktop/models/door.dart';
 import 'package:my_office_desktop/models/unit.dart';
 import 'package:my_office_desktop/pages/company_widgets/dialog_create_door.dart';
 import 'package:my_office_desktop/pages/company_widgets/dialog_create_unit.dart';
+import 'package:my_office_desktop/pages/company_widgets/dialog_edit_door.dart';
 import 'package:my_office_desktop/pages/widgets/unit_card.dart';
 
 import '../../models/company.dart';
 import '../../services/network.dart';
 import '../../theme.dart';
+import '../widgets/dialog_warning.dart';
 import '../widgets/textfield.dart';
 
 class DoorsListWidget extends StatefulWidget {
@@ -85,7 +87,7 @@ class _DoorListDoneState extends State<DoorListDone> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     company = widget.company;
     doorList = widget.doorList;
@@ -105,13 +107,18 @@ class _DoorListDoneState extends State<DoorListDone> {
                 height: 50,
                 child: ElevatedButton.icon(
                   onPressed: () async {
-                    List<Unit> unitList = await Network().getCompanyUnits(company.id);
-                    var reload = await Get.dialog(DialogCreateDoor(company: company, unit: unitList,));
+                    List<Unit> unitList =
+                        await Network().getCompanyUnits(company.id);
+                    var reload = await Get.dialog(DialogCreateDoor(
+                      company: company,
+                      unit: unitList,
+                    ));
                     if (reload != null) {
                       try {
                         final unitReload =
                             await Network().getCompanyDoors(company.id);
                         doorList.value = unitReload;
+                        changed(searchController.text);
                       } catch (e) {
                         rethrow;
                       }
@@ -170,7 +177,26 @@ class _DoorListDoneState extends State<DoorListDone> {
                               DataCell(Text(element.unit.name)),
                               DataCell(
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    List<Unit> unitList = await Network()
+                                        .getCompanyUnits(company.id);
+                                    var reload =
+                                        await Get.dialog(DialogEditDoor(
+                                      door: element,
+                                      company: company,
+                                      unit: unitList,
+                                    ));
+                                    if (reload != null) {
+                                      try {
+                                        final unitReload = await Network()
+                                            .getCompanyDoors(company.id);
+                                        doorList.value = unitReload;
+                                        changed(searchController.text);
+                                      } catch (e) {
+                                        rethrow;
+                                      }
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                       primary: CustomTheme.colorTheme),
                                   child: Text("Modifier"),
@@ -178,7 +204,35 @@ class _DoorListDoneState extends State<DoorListDone> {
                               ),
                               DataCell(
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    try {
+                                      bool? areYouSure = await warningDialog();
+                                      if (areYouSure != null) {
+                                        bool delete = await Network()
+                                            .deleteDoor(element.id);
+                                        if (delete) {
+                                          doorList.remove(element);
+                                          changed(searchController.text);
+                                        }
+                                      }
+                                    } catch (e) {
+                                      Get.defaultDialog(
+                                        title:
+                                            "Impossible de supprimer l'utilisateur",
+                                        middleText: e.toString(),
+                                        contentPadding: EdgeInsets.all(20.0),
+                                        confirm: TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(Get.context!).pop(),
+                                          child: Text(
+                                            'Fermer',
+                                            style: TextStyle(
+                                                color: CustomTheme.colorTheme),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                       primary: Colors.red),
                                   child: Text("Supprimer"),
@@ -198,7 +252,26 @@ class _DoorListDoneState extends State<DoorListDone> {
                               DataCell(Text(element.unit.name)),
                               DataCell(
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    List<Unit> unitList = await Network()
+                                        .getCompanyUnits(company.id);
+                                    var reload =
+                                        await Get.dialog(DialogEditDoor(
+                                      door: element,
+                                      company: company,
+                                      unit: unitList,
+                                    ));
+                                    if (reload != null) {
+                                      try {
+                                        final unitReload = await Network()
+                                            .getCompanyDoors(company.id);
+                                        doorList.value = unitReload;
+                                        changed(searchController.text);
+                                      } catch (e) {
+                                        rethrow;
+                                      }
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                       primary: CustomTheme.colorTheme),
                                   child: Text("Modifier"),
@@ -206,7 +279,35 @@ class _DoorListDoneState extends State<DoorListDone> {
                               ),
                               DataCell(
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    try {
+                                      bool? areYouSure = await warningDialog();
+                                      if (areYouSure != null) {
+                                        bool delete = await Network()
+                                            .deleteDoor(element.id);
+                                        if (delete) {
+                                          doorList.remove(element);
+                                          changed(searchController.text);
+                                        }
+                                      }
+                                    } catch (e) {
+                                      Get.defaultDialog(
+                                        title:
+                                            "Impossible de supprimer l'utilisateur",
+                                        middleText: e.toString(),
+                                        contentPadding: EdgeInsets.all(20.0),
+                                        confirm: TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(Get.context!).pop(),
+                                          child: Text(
+                                            'Fermer',
+                                            style: TextStyle(
+                                                color: CustomTheme.colorTheme),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                       primary: Colors.red),
                                   child: Text("Supprimer"),

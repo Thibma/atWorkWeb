@@ -1,13 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/models/unit.dart';
-import 'package:my_office_desktop/models/user_firestore.dart';
+import 'package:my_office_desktop/models/user.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_waiting.dart';
 import 'package:my_office_desktop/pages/widgets/textfield.dart';
 import 'package:my_office_desktop/services/authentication.dart';
@@ -19,33 +18,32 @@ import 'package:uuid/uuid.dart';
 
 import '../../models/company.dart';
 import '../../models/service.dart';
-import '../../models/user.dart';
 import '../../services/place_api.dart';
 
-class DialogCreateUser extends StatefulWidget {
-  DialogCreateUser({
+class DialogEditUser extends StatefulWidget {
+  DialogEditUser({
     Key? key,
     required this.company,
     required this.services,
     required this.units,
+    required this.user,
   }) : super(key: key);
 
   final Company company;
   final List<List<Service>> services;
   final List<Unit> units;
+  final ConnectedUser user;
 
   @override
-  State<DialogCreateUser> createState() => _DialogCreateUserState();
+  State<DialogEditUser> createState() => _DialogCreateUserState();
 }
 
-class _DialogCreateUserState extends State<DialogCreateUser> {
+class _DialogCreateUserState extends State<DialogEditUser> {
   final TextEditingController lastnameEditingController =
       TextEditingController();
 
   final TextEditingController firstnameEditingController =
       TextEditingController();
-
-  final TextEditingController mailEditingController = TextEditingController();
 
   final error = RxBool(false);
 
@@ -53,18 +51,26 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
 
   RxString query = RxString('');
 
-  Role? selectedRole;
-  Service? selectedService;
+  late Role selectedRole;
+  late Service selectedService;
 
   List<Map<String, String>> dropdownServices = [];
 
   late Company company;
   late List<List<Service>> services;
   late List<Unit> units;
+  late Rx<ConnectedUser> user;
+  late Map<String, String> userService;
 
   void changed(String search) {
     query.value = search;
     print(query.value);
+  }
+
+  Future<String> loadImage() async {
+    Reference ref = FirebaseStorage.instance.ref().child(user.value.idImage);
+    var url = await ref.getDownloadURL();
+    return url;
   }
 
   @override
@@ -73,6 +79,12 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
     company = widget.company;
     services = widget.services;
     units = widget.units;
+    user = Rx<ConnectedUser>(widget.user);
+    lastnameEditingController.text = user.value.lastname;
+    firstnameEditingController.text = user.value.firstname;
+    userService = {user.value.services.first.name: 'service'};
+    selectedRole = user.value.role;
+    selectedService = user.value.services.first;
 
     int i = 0;
     for (Unit unit in units) {
@@ -99,7 +111,7 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Créer un utilisateur',
+                    'Modifier un utilisateur',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
                   ),
                   SizedBox(
@@ -119,13 +131,6 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
                   SizedBox(
                     height: 20,
                   ),
-                  TextFieldApp(
-                      hint: "Adresse mail *",
-                      icon: Icons.mail,
-                      controller: mailEditingController),
-                  SizedBox(
-                    height: 20,
-                  ),
                   DropdownButtonFormField(
                     items: ["Collaborateur", "Administrateur"]
                         .map((e) => DropdownMenuItem(
@@ -133,6 +138,7 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
                               child: Text(e),
                             ))
                         .toList(),
+                    value: user.value.role.name,
                     onChanged: (String? newValue) {
                       if (newValue != null) {
                         if (newValue == "Collaborateur") {
@@ -181,6 +187,8 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
                                     ),
                             ))
                         .toList(),
+                    value: dropdownServices.firstWhere((element) =>
+                        element.keys.first == userService.keys.first),
                     onChanged: (Map<String, String>? newValue) {
                       if (newValue != null) {
                         for (List<Service> listService in services) {
@@ -244,9 +252,23 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
                         flex: 1,
                         child: Obx(
                           () => image.value == null
-                              ? Icon(
-                                  Icons.person,
-                                  size: 100,
+                              ? FutureBuilder(
+                                  future: loadImage(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<String> image) {
+                                    if (image.hasData) {
+                                      return Image.network(
+                                        image.data.toString(),
+                                        width: 100,
+                                        height: 100,
+                                      );
+                                    } else {
+                                      return Icon(
+                                        Icons.person,
+                                        size: 100,
+                                      );
+                                    }
+                                  },
                                 )
                               : Image.memory(
                                   image.value!,
@@ -282,10 +304,7 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
                       TextButton(
                         onPressed: () async {
                           if (firstnameEditingController.text.isEmpty ||
-                              lastnameEditingController.text.isEmpty ||
-                              mailEditingController.text.isEmpty ||
-                              selectedRole == null ||
-                              selectedService == null) {
+                              lastnameEditingController.text.isEmpty) {
                             error.value = true;
                             return;
                           }
@@ -293,55 +312,37 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
 
                           waitingDialog();
                           try {
-                            final firebaseUser =
-                                await Authentication.signUpWithEmailAndPassword(
-                                    mailEditingController.text,
-                                    "password",
-                                    context);
                             if (image.value != null) {
                               await FirebaseStorage.instance
-                                  .ref("imageProfile/${firebaseUser?.uid}")
+                                  .ref("imageProfile/${user.value.idFirebase}")
                                   .putData(
                                     image.value!,
                                     SettableMetadata(contentType: 'image/jpeg'),
                                   );
-                            } else {
-                              ByteData bytes = await rootBundle
-                                  .load("assets/default_profile.png");
-                              Uint8List rawData = bytes.buffer.asUint8List(
-                                  bytes.offsetInBytes, bytes.lengthInBytes);
-                              await FirebaseStorage.instance
-                                  .ref("imageProfile/${firebaseUser?.uid}")
-                                  .putData(
-                                      rawData,
-                                      SettableMetadata(
-                                          contentType: 'image/jpeg'));
                             }
 
-                            ConnectedUser user = await Network().createUser(
-                                firstnameEditingController.text,
-                                lastnameEditingController.text,
-                                mailEditingController.text,
-                                selectedRole!,
-                                firebaseUser!.uid,
-                                "imageProfile/${firebaseUser.uid}",
-                                selectedService!);
-
-                            final refUsers =
-                                FirebaseFirestore.instance.collection('users');
-                            final allUsers = await refUsers.get();
-                            final userDoc = refUsers.doc(firebaseUser.uid);
-                            final newUser = UserFirestore.UserFirebase(
-                                idUser: firebaseUser.uid,
-                                name: "${user.firstname} ${user.lastname}",
-                                lastMessageTime: DateTime.now());
-                            await userDoc.set(newUser.toJson());
+                            await Network().editUser(
+                                firstnameEditingController.text ==
+                                        user.value.firstname
+                                    ? null
+                                    : firstnameEditingController.text,
+                                lastnameEditingController.text ==
+                                        user.value.lastname
+                                    ? null
+                                    : lastnameEditingController.text,
+                                selectedRole == user.value.role
+                                    ? null
+                                    : selectedRole,
+                                selectedService == user.value.services.first
+                                    ? null
+                                    : selectedService,
+                                user.value.id);
                             Get.back();
                             Get.back(result: true);
                           } catch (e) {
                             Navigator.pop(context);
                             Get.defaultDialog(
-                              title: "Erreur lors de la création",
+                              title: "Erreur lors de la modification",
                               middleText: e.toString(),
                               contentPadding: EdgeInsets.all(20.0),
                               confirm: TextButton(
@@ -357,7 +358,7 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
                           }
                         },
                         child: const Text(
-                          "Créer",
+                          "Modifier",
                           style: TextStyle(
                             color: CustomTheme.colorTheme,
                             fontWeight: FontWeight.bold,

@@ -4,11 +4,15 @@ import 'package:my_office_desktop/models/service.dart';
 
 import 'package:my_office_desktop/models/user.dart';
 import 'package:my_office_desktop/pages/company_widgets/dialog_create_user.dart';
+import 'package:my_office_desktop/pages/company_widgets/dialog_edit_unit.dart';
+import 'package:my_office_desktop/pages/company_widgets/dialog_edit_user.dart';
+import 'package:my_office_desktop/services/authentication.dart';
 
 import '../../models/company.dart';
 import '../../models/unit.dart';
 import '../../services/network.dart';
 import '../../theme.dart';
+import '../widgets/dialog_warning.dart';
 import '../widgets/textfield.dart';
 
 class UsersListWidget extends StatefulWidget {
@@ -107,6 +111,7 @@ class UserListDone extends StatelessWidget {
                         final userReload =
                             await Network().getCompanyUsers(company.id);
                         usersList.value = userReload;
+                        changed(searchController.text);
                       } catch (e) {
                         rethrow;
                       }
@@ -169,7 +174,33 @@ class UserListDone extends StatelessWidget {
                               DataCell(Text(element.services.first.name)),
                               DataCell(
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    final units = await Network()
+                                        .getCompanyUnits(company.id);
+                                    List<List<Service>> services = [];
+                                    for (Unit unit in units) {
+                                      List<Service> service = await Network()
+                                          .getUnitService(unit.id);
+                                      services.add(service);
+                                    }
+                                    var reload =
+                                        await Get.dialog(DialogEditUser(
+                                      company: company,
+                                      units: units,
+                                      services: services,
+                                      user: element,
+                                    ));
+                                    if (reload != null) {
+                                      try {
+                                        final userReload = await Network()
+                                            .getCompanyUsers(company.id);
+                                        usersList.value = userReload;
+                                        changed(searchController.text);
+                                      } catch (e) {
+                                        rethrow;
+                                      }
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                       primary: CustomTheme.colorTheme),
                                   child: Text("Modifier"),
@@ -177,7 +208,56 @@ class UserListDone extends StatelessWidget {
                               ),
                               DataCell(
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    if (element.id ==
+                                        Authentication.connectedUser?.id) {
+                                      Get.defaultDialog(
+                                        title:
+                                            "Impossible de supprimer l'utilisateur",
+                                        middleText:
+                                            "Vous ne pouvez pas suppriper votre propre compte.",
+                                        contentPadding: EdgeInsets.all(20.0),
+                                        confirm: TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(Get.context!).pop(),
+                                          child: Text(
+                                            'Fermer',
+                                            style: TextStyle(
+                                                color: CustomTheme.colorTheme),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    try {
+                                      bool? areYouSure = await warningDialog();
+                                      if (areYouSure != null) {
+                                        bool delete = await Network()
+                                            .deleteUser(
+                                                element.id, element.idFirebase);
+                                        if (delete) {
+                                          usersList.remove(element);
+                                          changed(searchController.text);
+                                        }
+                                      }
+                                    } catch (e) {
+                                      Get.defaultDialog(
+                                        title:
+                                            "Impossible de supprimer l'utilisateur",
+                                        middleText: e.toString(),
+                                        contentPadding: EdgeInsets.all(20.0),
+                                        confirm: TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(Get.context!).pop(),
+                                          child: Text(
+                                            'Fermer',
+                                            style: TextStyle(
+                                                color: CustomTheme.colorTheme),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                       primary: Colors.red),
                                   child: Text("Supprimer"),
@@ -196,10 +276,36 @@ class UserListDone extends StatelessWidget {
                               DataCell(Text(element.email)),
                               DataCell(Text(element.idFirebase)),
                               DataCell(Text(element.role.name)),
-                              DataCell(Text(element.serviceNames())),
+                              DataCell(Text(element.services.first.name)),
                               DataCell(
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    final units = await Network()
+                                        .getCompanyUnits(company.id);
+                                    List<List<Service>> services = [];
+                                    for (Unit unit in units) {
+                                      List<Service> service = await Network()
+                                          .getUnitService(unit.id);
+                                      services.add(service);
+                                    }
+                                    var reload =
+                                        await Get.dialog(DialogEditUser(
+                                      company: company,
+                                      units: units,
+                                      services: services,
+                                      user: element,
+                                    ));
+                                    if (reload != null) {
+                                      try {
+                                        final userReload = await Network()
+                                            .getCompanyUsers(company.id);
+                                        usersList.value = userReload;
+                                        changed(searchController.text);
+                                      } catch (e) {
+                                        rethrow;
+                                      }
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                       primary: CustomTheme.colorTheme),
                                   child: Text("Modifier"),
@@ -207,7 +313,56 @@ class UserListDone extends StatelessWidget {
                               ),
                               DataCell(
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    if (element.id ==
+                                        Authentication.connectedUser?.id) {
+                                      Get.defaultDialog(
+                                        title:
+                                            "Impossible de supprimer l'utilisateur",
+                                        middleText:
+                                            "Vous ne pouvez pas suppriper votre propre compte.",
+                                        contentPadding: EdgeInsets.all(20.0),
+                                        confirm: TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(Get.context!).pop(),
+                                          child: Text(
+                                            'Fermer',
+                                            style: TextStyle(
+                                                color: CustomTheme.colorTheme),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    try {
+                                      bool? areYouSure = await warningDialog();
+                                      if (areYouSure != null) {
+                                        bool delete = await Network()
+                                            .deleteUser(
+                                                element.id, element.idFirebase);
+                                        if (delete) {
+                                          usersList.remove(element);
+                                          changed(searchController.text);
+                                        }
+                                      }
+                                    } catch (e) {
+                                      Get.defaultDialog(
+                                        title:
+                                            "Impossible de supprimer l'utilisateur",
+                                        middleText: e.toString(),
+                                        contentPadding: EdgeInsets.all(20.0),
+                                        confirm: TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(Get.context!).pop(),
+                                          child: Text(
+                                            'Fermer',
+                                            style: TextStyle(
+                                                color: CustomTheme.colorTheme),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                       primary: Colors.red),
                                   child: Text("Supprimer"),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_office_desktop/models/company.dart';
+import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/pages/widgets/drawer_list.dart';
 import 'package:my_office_desktop/pages/widgets/profile_card.dart';
+import 'package:my_office_desktop/theme.dart';
 
 import '../services/authentication.dart';
 
@@ -79,24 +81,24 @@ class HomeAdmin extends StatelessWidget {
                       title: "Unités",
                       icon: Icons.apartment,
                       press: () {
-                        Navigator.pushNamed(context,
-                            'company/${company.id}/units');
+                        Navigator.pushNamed(
+                            context, 'company/${company.id}/units');
                       },
                     ),
                     DrawerListTile(
                       title: "Utilisateurs",
                       icon: Icons.group,
                       press: () {
-                        Navigator.pushNamed(context,
-                            'company/${company.id}/users');
+                        Navigator.pushNamed(
+                            context, 'company/${company.id}/users');
                       },
                     ),
                     DrawerListTile(
                       title: "Portes connectées",
                       icon: Icons.door_front_door,
                       press: () {
-                        Navigator.pushNamed(context,
-                            'company/${company.id}/doors');
+                        Navigator.pushNamed(
+                            context, 'company/${company.id}/doors');
                       },
                     ),
                   ],
@@ -115,11 +117,27 @@ class HomeAdmin extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Authentication.connectedUser?.role == Role.SuperAdmin
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextButton.icon(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context,
+                                          "dashboard/${Authentication.connectedUser?.id}/companies");
+                                    },
+                                    icon: Icon(
+                                      Icons.arrow_back,
+                                      color: CustomTheme.colorTheme,
+                                    ),
+                                    label: Text('')),
+                              )
+                            : Container(),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             company.name,
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ),
                         Spacer(),

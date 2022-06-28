@@ -125,17 +125,17 @@ class HomePage extends StatelessWidget {
       }
 
       // Navigate to dashboard
-      Navigator.of(Get.context!).pop();
       Authentication.connectedUser = connectedUser;
       if (connectedUser.role == Role.SuperAdmin) {
+        Navigator.of(Get.context!).pop();
         Navigator.pushNamed(
-          Get.context!, 'dashboard/${connectedUser.id}/companies');
-      }
-      else if (connectedUser.role == Role.Administrateur) {
-        List<Company> company = await Network().getUserCompanies(Authentication.connectedUser!.id);
+            Get.context!, 'dashboard/${connectedUser.id}/companies');
+      } else if (connectedUser.role == Role.Administrateur) {
+        Navigator.of(Get.context!).pop();
+        List<Company> company =
+            await Network().getUserCompanies(Authentication.connectedUser!.id);
         Navigator.pushNamed(Get.context!, "/company/${company.first.id}/units");
-      }
-      else {
+      } else {
         throw ("Vous n'avez pas les privilèges pour accéder à ce site.");
       }
     } catch (err) {

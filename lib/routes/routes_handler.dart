@@ -1,10 +1,12 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:my_office_desktop/main.dart';
 import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/pages/dashboard_admin_page.dart';
 import 'package:my_office_desktop/pages/dashboard_widgets/demandes_list_widget.dart';
 import 'package:my_office_desktop/pages/dashboard_widgets/profile_list_widget.dart';
+import 'package:my_office_desktop/pages/home.dart';
 import 'package:my_office_desktop/pages/login.dart';
 import 'package:my_office_desktop/services/network.dart';
 
@@ -20,7 +22,7 @@ import '../theme.dart';
 
 var rootHandler = Handler(
   handlerFunc: (context, parameters) {
-    return HomePage();
+    return HomeWeb();
   },
 );
 
@@ -200,6 +202,10 @@ Future<bool> userVerification(String companyId) async {
     return true;
   }
 
+  if (Authentication.connectedUser?.role == Role.Collaborateur) {
+    return false;
+  }
+
   final companies =
       await Network().getUserCompanies(Authentication.connectedUser!.id);
 
@@ -237,9 +243,14 @@ class _ErrorPageState extends State<ErrorPage> {
                   if (Authentication.connectedUser?.role == Role.SuperAdmin) {
                     navigatorKey.currentState?.pushReplacementNamed(
                         "/dashboard/${Authentication.connectedUser?.id}/companies");
+                  } else if (Authentication.connectedUser?.role ==
+                      Role.Administrateur) {
+                    List<Company> company = await Network()
+                        .getUserCompanies(Authentication.connectedUser!.id);
+                    navigatorKey.currentState?.pushReplacementNamed(
+                        "/company/${company.first.id}/units");
                   } else {
-                    List<Company> company = await Network().getUserCompanies(Authentication.connectedUser!.id);
-                    navigatorKey.currentState?.pushReplacementNamed("/company/${company.first.id}/units");
+                    navigatorKey.currentState?.pushReplacementNamed('/');
                   }
                 } else {
                   navigatorKey.currentState?.pushReplacementNamed('/');

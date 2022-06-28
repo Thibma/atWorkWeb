@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_office_desktop/models/company.dart';
 import 'package:my_office_desktop/models/door.dart';
 import 'package:my_office_desktop/models/door_status.dart';
@@ -65,8 +66,31 @@ class Network {
     }
   }
 
+  // SignIn
+  Future<ConnectedUser?> getUserByMail(String email) async {
+    try {
+      final response = await http.get(Uri.parse("${address}users/email/$email"),
+          headers: apiToken);
+
+      try {
+        return ConnectedUser.fromJson(apiResponse(response).content);
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // Créer un user
-  Future<ConnectedUser> createUser(String firstName, String lastName, String mail, Role role, String idFirebase, String idImage, Service service) async {
+  Future<ConnectedUser> createUser(
+      String firstName,
+      String lastName,
+      String mail,
+      Role role,
+      String idFirebase,
+      String idImage,
+      Service service) async {
     try {
       final response = await http.post(Uri.parse("${address}users"),
           headers: apiTokenPost,
@@ -90,7 +114,8 @@ class Network {
     }
   }
 
-  Future<ConnectedUser> editUser(String? firstName, String? lastName, Role? role, String? idImage, Service? service) async {
+  Future<ConnectedUser> editUser(String? firstName, String? lastName,
+      Role? role, Service? service, String idUser) async {
     Map<String, dynamic> body = {};
 
     if (firstName != null) {
@@ -102,16 +127,12 @@ class Network {
     if (role != null) {
       body["role"] = role.name;
     }
-    if (idImage != null) {
-      body["idImage"] = idImage;
-    }
     if (service != null) {
       body["services"] = service.id;
     }
     try {
-      final response = await http.post(Uri.parse("${address}users"),
-          headers: apiTokenPost,
-          body: jsonEncode(body));
+      final response = await http.put(Uri.parse("${address}users/$idUser"),
+          headers: apiTokenPost, body: jsonEncode(body));
 
       try {
         return ConnectedUser.fromJson(apiResponse(response).content);
@@ -147,8 +168,9 @@ class Network {
   // Obtenir toutes les portes d'une entreprise
   Future<List<Door>> getCompanyDoors(String companyId) async {
     try {
-      final response =
-          await http.get(Uri.parse("${address}doors/company/$companyId"), headers: apiToken);
+      final response = await http.get(
+          Uri.parse("${address}doors/company/$companyId"),
+          headers: apiToken);
 
       try {
         var data = apiResponse(response).content;
@@ -265,9 +287,8 @@ class Network {
 
   Future<List<Service>> getUnitService(String unitId) async {
     try {
-      final response = await http.get(
-          Uri.parse("${address}services/unit/$unitId"),
-          headers: apiToken);
+      final response = await http
+          .get(Uri.parse("${address}services/unit/$unitId"), headers: apiToken);
 
       try {
         var data = apiResponse(response).content;
@@ -321,8 +342,7 @@ class Network {
     }
     try {
       final response = await http.put(Uri.parse("${address}units/$unitId"),
-          headers: apiTokenPost,
-          body: jsonEncode(body));
+          headers: apiTokenPost, body: jsonEncode(body));
 
       try {
         return Unit.fromJson(apiResponse(response).content);
@@ -334,9 +354,6 @@ class Network {
     }
   }
 
-  
-
-
   // Créer une unité
   Future<Door> createDoor(String tag, DoorStatus status, String unitId) async {
     try {
@@ -347,6 +364,32 @@ class Network {
             'status': status.name,
             'unit': unitId,
           }));
+
+      try {
+        return Door.fromJson(apiResponse(response).content);
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Door> editDoor(
+      String? tag, DoorStatus? status, String? unitId, String doorId) async {
+    Map<String, dynamic> body = {};
+    if (tag != null) {
+      body["tag"] = tag;
+    }
+    if (status != null) {
+      body["status"] = status.name;
+    }
+    if (unitId != null) {
+      body["unit"] = unitId;
+    }
+    try {
+      final response = await http.put(Uri.parse("${address}doors/$doorId"),
+          headers: apiTokenPost, body: jsonEncode(body));
 
       try {
         return Door.fromJson(apiResponse(response).content);
@@ -381,8 +424,7 @@ class Network {
 
   Future<List<ConnectedUser>> getUnitsUsers(String unitId) async {
     try {
-      final response = await http.get(
-          Uri.parse("${address}users/unit/$unitId"),
+      final response = await http.get(Uri.parse("${address}users/unit/$unitId"),
           headers: apiToken);
 
       try {
@@ -453,39 +495,72 @@ class Network {
 
   Future<bool> deleteService(String idService) async {
     try {
-      final response = await http.delete(Uri.parse("${address}services/$idService"),
-      headers: apiToken);
+      final response = await http.delete(
+          Uri.parse("${address}services/$idService"),
+          headers: apiToken);
 
       try {
         return apiResponse(response).content;
       } catch (e) {
         rethrow;
       }
+    } catch (e) {
+      rethrow;
     }
-    catch (e) {
+  }
+
+  Future<bool> deleteDoor(String idDoor) async {
+    try {
+      final response = await http.delete(Uri.parse("${address}doors/$idDoor"),
+          headers: apiToken);
+
+      try {
+        return apiResponse(response).content;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteUser(String idUser, String idFirebase) async {
+    try {
+      final response = await http.delete(Uri.parse("${address}users/$idUser"),
+          headers: apiToken);
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(idFirebase)
+          .delete();
+
+      try {
+        return apiResponse(response).content;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
       rethrow;
     }
   }
 
   Future<bool> deleteUnit(String idUnit) async {
     try {
-
       final List<ConnectedUser> userList = await getUnitsUsers(idUnit);
 
       if (userList.isNotEmpty) {
-        throw("Impossible de supprimer la liste, il faut qu'il n'y ai plus un seul collaborateur pour supprimer l'unité.");
+        throw ("Impossible de supprimer la liste, il faut qu'il n'y ai plus un seul collaborateur pour supprimer l'unité.");
       }
 
       final response = await http.delete(Uri.parse("${address}units/$idUnit"),
-      headers: apiToken);
+          headers: apiToken);
 
       try {
         return apiResponse(response).content;
       } catch (e) {
         rethrow;
       }
-    }
-    catch (e) {
+    } catch (e) {
       rethrow;
     }
   }

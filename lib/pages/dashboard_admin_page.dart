@@ -77,14 +77,6 @@ class HomeSuperAdmin extends StatelessWidget {
                           Navigator.pushNamed(context,
                               'dashboard/${Authentication.connectedUser!.id}/demandes');
                         }),
-                    DrawerListTile(
-                      title: "Profil",
-                      icon: Icons.person,
-                      press: () {
-                        Navigator.pushNamed(context,
-                            'dashboard/${Authentication.connectedUser!.id}/profil');
-                      },
-                    )
                   ],
                 ),
               ),

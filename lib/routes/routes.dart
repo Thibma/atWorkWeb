@@ -7,7 +7,6 @@ class Routes {
 
   static String dashboardCompanies = "/dashboard/:id/companies";
   static String dashboardDemandes = "/dashboard/:id/demandes";
-  static String dashboardProfil = "/dashboard/:id/profil";
 
   static String companyUnits = "/company/:id/units";
   static String companyUsers = "/company/:id/users";
@@ -24,8 +23,6 @@ class Routes {
         transitionType: TransitionType.none);
     router.define(dashboardDemandes,
         handler: dashboardDemandesHandler, transitionType: TransitionType.none);
-    router.define(dashboardProfil,
-        handler: dashboardProfileHandler, transitionType: TransitionType.none);
 
     router.define(companyUnits,
         handler: companyUnitsHandler, transitionType: TransitionType.none);

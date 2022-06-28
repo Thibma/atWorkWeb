@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:my_office_desktop/main.dart';
 import 'package:my_office_desktop/services/authentication.dart';
 
 import '../../theme.dart';
@@ -52,13 +54,17 @@ class ProfileCard extends StatelessWidget {
                     onTap: () async {
                       await Authentication.signOut();
                       // ignore: use_build_context_synchronously
-                      Navigator.popAndPushNamed(context,
-                            '/');
+                      Navigator.popAndPushNamed(context, '/');
                     },
                     child: Row(
                       children: [
-                        Icon(Icons.power_settings_new, color: Colors.red,),
-                        SizedBox(width: 10,),
+                        Icon(
+                          Icons.power_settings_new,
+                          color: Colors.red,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Text(
                           "Déconnexion",
                           style: TextStyle(color: Colors.red),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:my_office_desktop/pages/widgets/textfield.dart';
+import 'package:my_office_desktop/services/authentication.dart';
 import 'package:my_office_desktop/theme.dart';
 
 Widget dialogForgetPassword(BuildContext context) {
@@ -15,7 +17,38 @@ Widget dialogForgetPassword(BuildContext context) {
             controller: mailEditingController)),
     actions: [
       TextButton(
-        onPressed: () => {},
+        onPressed: () async {
+          try {
+            await Authentication.resetPassword(mailEditingController.text);
+            Get.back();
+            Get.defaultDialog(
+              title: "Mail envoyé",
+              middleText:
+                  "Merci de vérifier dans votre boite mail pour réinitialiser le mot de passe.",
+              contentPadding: EdgeInsets.all(20.0),
+              confirm: TextButton(
+                onPressed: () => Navigator.of(Get.context!).pop(),
+                child: Text(
+                  'Fermer',
+                  style: TextStyle(color: CustomTheme.colorTheme),
+                ),
+              ),
+            );
+          } catch (e) {
+            Get.defaultDialog(
+              title: "Erreur lors de la réinitialisation du mot de passe",
+              middleText: e.toString(),
+              contentPadding: EdgeInsets.all(20.0),
+              confirm: TextButton(
+                onPressed: () => Navigator.of(Get.context!).pop(),
+                child: Text(
+                  'Fermer',
+                  style: TextStyle(color: CustomTheme.colorTheme),
+                ),
+              ),
+            );
+          }
+        },
         child: const Text(
           "Envoyer",
           style: TextStyle(

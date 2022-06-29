@@ -215,7 +215,7 @@ class UserListDone extends StatelessWidget {
                                         title:
                                             "Impossible de supprimer l'utilisateur",
                                         middleText:
-                                            "Vous ne pouvez pas suppriper votre propre compte.",
+                                            "Vous ne pouvez pas supprimer votre propre compte.",
                                         contentPadding: EdgeInsets.all(20.0),
                                         confirm: TextButton(
                                           onPressed: () =>
@@ -232,12 +232,14 @@ class UserListDone extends StatelessWidget {
                                     try {
                                       bool? areYouSure = await warningDialog();
                                       if (areYouSure != null) {
-                                        bool delete = await Network()
-                                            .deleteUser(
-                                                element.id, element.idFirebase);
-                                        if (delete) {
-                                          usersList.remove(element);
-                                          changed(searchController.text);
+                                        if (areYouSure == true) {
+                                          bool delete = await Network()
+                                              .deleteUser(element.id,
+                                                  element.idFirebase);
+                                          if (delete) {
+                                            usersList.remove(element);
+                                            changed(searchController.text);
+                                          }
                                         }
                                       }
                                     } catch (e) {
@@ -320,7 +322,7 @@ class UserListDone extends StatelessWidget {
                                         title:
                                             "Impossible de supprimer l'utilisateur",
                                         middleText:
-                                            "Vous ne pouvez pas suppriper votre propre compte.",
+                                            "Vous ne pouvez pas supprimer votre propre compte.",
                                         contentPadding: EdgeInsets.all(20.0),
                                         confirm: TextButton(
                                           onPressed: () =>
@@ -337,12 +339,14 @@ class UserListDone extends StatelessWidget {
                                     try {
                                       bool? areYouSure = await warningDialog();
                                       if (areYouSure != null) {
-                                        bool delete = await Network()
-                                            .deleteUser(
-                                                element.id, element.idFirebase);
-                                        if (delete) {
-                                          usersList.remove(element);
-                                          changed(searchController.text);
+                                        if (areYouSure == true) {
+                                          bool delete = await Network()
+                                              .deleteUser(element.id,
+                                                  element.idFirebase);
+                                          if (delete) {
+                                            usersList.remove(element);
+                                            changed(searchController.text);
+                                          }
                                         }
                                       }
                                     } catch (e) {

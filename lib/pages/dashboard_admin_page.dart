@@ -56,11 +56,19 @@ class HomeSuperAdmin extends StatelessWidget {
                 child: Column(
                   children: [
                     DrawerHeader(
-                      child: Center(
-                          child: Image.asset(
-                        "assets/logo.png",
-                        scale: 0.2,
-                      )),
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, "/");
+                          },
+                          child: Center(
+                              child: Image.asset(
+                            "assets/logo.png",
+                            scale: 0.2,
+                          )),
+                        ),
+                      ),
                     ),
                     DrawerListTile(
                       title: "Entreprises",

@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-import '../services/utils.dart';
+import '../utils/utils.dart';
 
 class UserFirestoreField {
   static final String lastMessageTime = 'lastMessageTime';

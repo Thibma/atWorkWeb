@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:fluro/fluro.dart';
-import 'package:my_office_desktop/models/company.dart';
-import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/routes/application.dart';
 import 'package:my_office_desktop/routes/routes.dart';
 import 'package:my_office_desktop/services/authentication.dart';
-import 'package:my_office_desktop/services/network.dart';
 
 const colorTheme = Color(0xFF3f51b5);
 User? user;
@@ -23,15 +20,6 @@ void main() async {
   Routes.configureRoutes(router);
   Application.router = router;
   user = await Authentication.initializeFirebase();
-  if (Authentication.connectedUser?.role == Role.SuperAdmin) {
-    routeAdminOrNot = 'dashboard/${Authentication.connectedUser?.id}/companies';
-  } else if (Authentication.connectedUser?.role == Role.Administrateur) {
-    List<Company> company =
-        await Network().getUserCompanies(Authentication.connectedUser!.id);
-    routeAdminOrNot = "/company/${company.first.id}/units";
-  } else {
-    routeAdminOrNot = '/';
-  }
   runApp(MyApp());
 }
 
@@ -55,7 +43,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'At Work',
       onGenerateRoute: Application.router.generator,
-      initialRoute: user == null ? '/' : routeAdminOrNot,
+      initialRoute: '/',
       navigatorKey: navigatorKey,
     );
   }

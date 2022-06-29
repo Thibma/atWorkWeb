@@ -171,7 +171,9 @@ class DialogCreateDoor extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () async {
-                          if (tagEditingController.text.isEmpty || doorStatus == null || selectedUnit == null) {
+                          if (tagEditingController.text.isEmpty ||
+                              doorStatus == null ||
+                              selectedUnit == null) {
                             error.value = true;
                             return;
                           }

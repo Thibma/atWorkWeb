@@ -208,11 +208,13 @@ class _DoorListDoneState extends State<DoorListDone> {
                                     try {
                                       bool? areYouSure = await warningDialog();
                                       if (areYouSure != null) {
-                                        bool delete = await Network()
-                                            .deleteDoor(element.id);
-                                        if (delete) {
-                                          doorList.remove(element);
-                                          changed(searchController.text);
+                                        if (areYouSure == true) {
+                                          bool delete = await Network()
+                                              .deleteDoor(element.id);
+                                          if (delete) {
+                                            doorList.remove(element);
+                                            changed(searchController.text);
+                                          }
                                         }
                                       }
                                     } catch (e) {
@@ -283,11 +285,13 @@ class _DoorListDoneState extends State<DoorListDone> {
                                     try {
                                       bool? areYouSure = await warningDialog();
                                       if (areYouSure != null) {
-                                        bool delete = await Network()
-                                            .deleteDoor(element.id);
-                                        if (delete) {
-                                          doorList.remove(element);
-                                          changed(searchController.text);
+                                        if (areYouSure == true) {
+                                          bool delete = await Network()
+                                              .deleteDoor(element.id);
+                                          if (delete) {
+                                            doorList.remove(element);
+                                            changed(searchController.text);
+                                          }
                                         }
                                       }
                                     } catch (e) {

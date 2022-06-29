@@ -26,6 +26,12 @@ var rootHandler = Handler(
   },
 );
 
+var loginHandler = Handler(
+  handlerFunc: (context, parameters) {
+    return HomePage();
+  },
+);
+
 var dashboardCompaniesHandler = Handler(handlerFunc: (context, parameters) {
   String? id = parameters["id"]?.first;
   if (Authentication.getFirebaseUser() == null) {

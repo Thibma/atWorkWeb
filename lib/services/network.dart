@@ -6,6 +6,7 @@ import 'package:my_office_desktop/models/response_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/models/service.dart';
+import 'package:my_office_desktop/models/ticket.dart';
 import 'package:my_office_desktop/models/unit.dart';
 
 import 'dart:convert';
@@ -27,6 +28,11 @@ class Network {
   final Map<String, String> apiTokenPost = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
     "firebase": Authentication.getFirebaseUser()!.uid,
+    "Content-Type": "application/json"
+  };
+
+  final Map<String, String> apiTokenOnlyPost = {
+    "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
     "Content-Type": "application/json"
   };
 
@@ -155,6 +161,27 @@ class Network {
         List<Company> list = [];
         data.forEach((item) {
           list.add(Company.fromJson(item));
+        });
+        return list;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Obtenir tous les tickets
+  Future<List<Ticket>> getAllTickets() async {
+    try {
+      final response =
+          await http.get(Uri.parse("${address}tickets"), headers: apiToken);
+
+      try {
+        var data = apiResponse(response).content;
+        List<Ticket> list = [];
+        data.forEach((item) {
+          list.add(Ticket.fromJson(item));
         });
         return list;
       } catch (e) {
@@ -557,6 +584,27 @@ class Network {
 
       try {
         return apiResponse(response).content;
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Créer un service
+  Future<Ticket> createTicket(String creator, String description) async {
+    try {
+      final response = await http.post(Uri.parse("${address}tickets"),
+          headers: apiTokenOnlyPost,
+          body: jsonEncode(<String, String>{
+            'creator': creator,
+            'description': description,
+            'status': TicketStatus.Waiting.name
+          }));
+
+      try {
+        return Ticket.fromJson(apiResponse(response).content);
       } catch (e) {
         rethrow;
       }

@@ -22,69 +22,76 @@ class HomePage extends StatelessWidget {
   Widget loginPage(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFf5f5f5),
-      body: Center(
-        child: SizedBox(
-          width: 320,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              TextFieldApp(
-                hint: "Adresse mail",
-                icon: Icons.mail,
-                controller: mailController,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+      body: Stack(
+        children: [
+          Container(
+              alignment: Alignment.topCenter,
+              child: Image.asset("assets/logo_home.png")),
+          Center(
+            child: SizedBox(
+              width: 320,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextFieldApp(
-                    hint: "Mot de passe",
-                    icon: Icons.lock,
-                    obscureText: true,
-                    controller: passwordController,
+                    hint: "Adresse mail",
+                    icon: Icons.mail,
+                    controller: mailController,
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
-                  SelectableText.rich(
-                    TextSpan(
-                      mouseCursor: SystemMouseCursors.click,
-                      style: const TextStyle(color: CustomTheme.colorTheme),
-                      text: "Mot de passe oublié ?",
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => {
-                              showDialog(
-                                  context: context,
-                                  builder: dialogForgetPassword)
-                            },
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      TextFieldApp(
+                        hint: "Mot de passe",
+                        icon: Icons.lock,
+                        obscureText: true,
+                        controller: passwordController,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SelectableText.rich(
+                        TextSpan(
+                          mouseCursor: SystemMouseCursors.click,
+                          style: const TextStyle(color: CustomTheme.colorTheme),
+                          text: "Mot de passe oublié ?",
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => {
+                                  showDialog(
+                                      context: context,
+                                      builder: dialogForgetPassword)
+                                },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  ElevatedButton(
+                    onPressed: () => signIn(),
+                    style: ElevatedButton.styleFrom(
+                        primary: CustomTheme.colorTheme,
+                        onPrimary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15))),
+                    child: const SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: Center(
+                        child: Text("Connexion"),
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 30,
-              ),
-              ElevatedButton(
-                onPressed: () => signIn(),
-                style: ElevatedButton.styleFrom(
-                    primary: CustomTheme.colorTheme,
-                    onPrimary: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15))),
-                child: const SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: Center(
-                    child: Text("Connexion"),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

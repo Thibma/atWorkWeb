@@ -80,6 +80,9 @@ flutter:
     - assets/default_profile.png
     - assets/web/screen.jpg
     - assets/web/background.png
+    - assets/web/google_play.png
+    - assets/web/apple_store.png
+    - assets/web/qrcode_google.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

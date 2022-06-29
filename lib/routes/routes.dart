@@ -5,6 +5,8 @@ import 'package:my_office_desktop/routes/routes_handler.dart';
 class Routes {
   static String root = "/";
 
+  static String login = "/login";
+
   static String dashboardCompanies = "/dashboard/:id/companies";
   static String dashboardDemandes = "/dashboard/:id/demandes";
 
@@ -17,6 +19,9 @@ class Routes {
   static void configureRoutes(FluroRouter router) {
     router.define(root,
         handler: rootHandler, transitionType: TransitionType.none);
+
+    router.define(login,
+        handler: loginHandler, transitionType: TransitionType.none);
 
     router.define(dashboardCompanies,
         handler: dashboardCompaniesHandler,

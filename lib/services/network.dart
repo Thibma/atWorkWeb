@@ -612,4 +612,22 @@ class Network {
       rethrow;
     }
   }
+
+  Future<Door> editTicket(TicketStatus ticketStatus, String ticketId) async {
+    try {
+      final response = await http.put(Uri.parse("${address}tickets/$ticketId"),
+          headers: apiTokenPost, body: jsonEncode(<String, String> {
+            'status': ticketStatus.name
+          }));
+
+      try {
+        return Door.fromJson(apiResponse(response).content);
+      } catch (e) {
+        rethrow;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 }

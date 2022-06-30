@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:my_office_desktop/theme.dart';
 
 import '../../models/ticket.dart';
@@ -58,11 +59,22 @@ class _DemandesListDoneState extends State<DemandesListDone>
   late TabController tabController;
   late List<Ticket> tickets;
 
+  RxList<Ticket> archivedTickets = RxList<Ticket>([]);
+  RxList<Ticket> waitingTickets = RxList<Ticket>([]);
+
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     tickets = widget.tickets;
+
+    for (Ticket ticket in tickets) {
+      if (ticket.status == TicketStatus.Waiting) {
+        waitingTickets.add(ticket);
+      } else {
+        archivedTickets.add(ticket);
+      }
+    }
   }
 
   @override
@@ -82,64 +94,78 @@ class _DemandesListDoneState extends State<DemandesListDone>
             )
           ],
         ),
-        /*TabBarView(controller: tabController, children: [
-          DataTable(
-              columns: [
-                DataColumn(label: Text("ID")),
-                DataColumn(label: Text("Créateur")),
-                DataColumn(label: Text("Description")),
-                DataColumn(label: Text("Status")),
-                DataColumn(label: Text("Archiver")),
-              ],
-              rows: tickets
-                  .map(
-                    (element) => DataRow(
-                      cells: [
-                        DataCell(Text(element.id)),
-                        DataCell(Text(element.creator)),
-                        DataCell(Text(element.description)),
-                        DataCell(Text(element.status.name)),
-                        DataCell(
-                          ElevatedButton(
-                            onPressed: () async {},
-                            style: ElevatedButton.styleFrom(
-                                primary: CustomTheme.colorTheme),
-                            child: Text("Modifier"),
-                          ),
+        Obx(
+          () => Container(
+            height: MediaQuery.of(context).size.height,
+            child: TabBarView(controller: tabController, children: [
+              DataTable(
+                  columns: [
+                    DataColumn(label: Text("ID")),
+                    DataColumn(label: Text("Créateur")),
+                    DataColumn(label: Text("Description")),
+                    DataColumn(label: Text("Status")),
+                    DataColumn(label: Text("Archiver")),
+                  ],
+                  rows: waitingTickets
+                      .map(
+                        (element) => DataRow(
+                          cells: [
+                            DataCell(Text(element.id)),
+                            DataCell(Text(element.creator)),
+                            DataCell(Text(element.description)),
+                            DataCell(Text(element.status.name)),
+                            DataCell(
+                              ElevatedButton(
+                                onPressed: () async {
+                                  try {
+                                    await Network().editTicket(
+                                        TicketStatus.Closed, element.id);
+                                    waitingTickets.remove(element);
+                                    archivedTickets.add(element);
+                                  } catch (e) {
+                                    return;
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    primary: CustomTheme.colorTheme),
+                                child: Text("Archiver"),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                  .toList()),
-          DataTable(
-              columns: [
-                DataColumn(label: Text("ID")),
-                DataColumn(label: Text("Créateur")),
-                DataColumn(label: Text("Description")),
-                DataColumn(label: Text("Status")),
-                DataColumn(label: Text("Ne plus archiver")),
-              ],
-              rows: tickets
-                  .map(
-                    (element) => DataRow(
-                      cells: [
-                        DataCell(Text(element.id)),
-                        DataCell(Text(element.creator)),
-                        DataCell(Text(element.description)),
-                        DataCell(Text(element.status.name)),
-                        DataCell(
-                          ElevatedButton(
-                            onPressed: () async {},
-                            style: ElevatedButton.styleFrom(
-                                primary: CustomTheme.colorTheme),
-                            child: Text("Modifier"),
-                          ),
+                      )
+                      .toList()),
+              DataTable(
+                  columns: [
+                    DataColumn(label: Text("ID")),
+                    DataColumn(label: Text("Créateur")),
+                    DataColumn(label: Text("Description")),
+                    DataColumn(label: Text("Status")),
+                    DataColumn(label: Text("Ne plus archiver")),
+                  ],
+                  rows: archivedTickets
+                      .map(
+                        (element) => DataRow(
+                          cells: [
+                            DataCell(Text(element.id)),
+                            DataCell(Text(element.creator)),
+                            DataCell(Text(element.description)),
+                            DataCell(Text(element.status.name)),
+                            DataCell(
+                              ElevatedButton(
+                                onPressed: () async {},
+                                style: ElevatedButton.styleFrom(
+                                    primary: CustomTheme.colorTheme),
+                                child: Text("Ne plus archiver"),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                  .toList())
-        ])*/
+                      )
+                      .toList())
+            ]),
+          ),
+        )
       ],
     );
   }

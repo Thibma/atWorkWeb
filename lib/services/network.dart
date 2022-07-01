@@ -613,7 +613,7 @@ class Network {
     }
   }
 
-  Future<Door> editTicket(TicketStatus ticketStatus, String ticketId) async {
+  Future<Ticket> editTicket(TicketStatus ticketStatus, String ticketId) async {
     try {
       final response = await http.put(Uri.parse("${address}tickets/$ticketId"),
           headers: apiTokenPost, body: jsonEncode(<String, String> {
@@ -621,7 +621,7 @@ class Network {
           }));
 
       try {
-        return Door.fromJson(apiResponse(response).content);
+        return Ticket.fromJson(apiResponse(response).content);
       } catch (e) {
         rethrow;
       }

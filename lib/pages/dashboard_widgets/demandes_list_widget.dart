@@ -94,78 +94,87 @@ class _DemandesListDoneState extends State<DemandesListDone>
             )
           ],
         ),
-        Obx(
-          () => Container(
+        Container(
             height: MediaQuery.of(context).size.height,
             child: TabBarView(controller: tabController, children: [
-              DataTable(
-                  columns: [
-                    DataColumn(label: Text("ID")),
-                    DataColumn(label: Text("Créateur")),
-                    DataColumn(label: Text("Description")),
-                    DataColumn(label: Text("Status")),
-                    DataColumn(label: Text("Archiver")),
-                  ],
-                  rows: waitingTickets
-                      .map(
-                        (element) => DataRow(
-                          cells: [
-                            DataCell(Text(element.id)),
-                            DataCell(Text(element.creator)),
-                            DataCell(Text(element.description)),
-                            DataCell(Text(element.status.name)),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () async {
-                                  try {
-                                    await Network().editTicket(
-                                        TicketStatus.Closed, element.id);
-                                    waitingTickets.remove(element);
-                                    archivedTickets.add(element);
-                                  } catch (e) {
-                                    return;
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    primary: CustomTheme.colorTheme),
-                                child: Text("Archiver"),
+              Obx( () => DataTable(
+                    columns: [
+                      DataColumn(label: Text("ID")),
+                      DataColumn(label: Text("Créateur")),
+                      DataColumn(label: Text("Description")),
+                      DataColumn(label: Text("Status")),
+                      DataColumn(label: Text("Archiver")),
+                    ],
+                    rows: waitingTickets
+                        .map(
+                          (element) => DataRow(
+                            cells: [
+                              DataCell(Text(element.id)),
+                              DataCell(Text(element.creator)),
+                              DataCell(Text(element.description)),
+                              DataCell(Text(element.status.name)),
+                              DataCell(
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      Ticket newTicket = await Network().editTicket(
+                                          TicketStatus.Closed, element.id);
+                                      waitingTickets.remove(element);
+                                      archivedTickets.add(newTicket);
+                                    } catch (e) {
+                                      return;
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      primary: CustomTheme.colorTheme),
+                                  child: Text("Archiver"),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                      .toList()),
-              DataTable(
-                  columns: [
-                    DataColumn(label: Text("ID")),
-                    DataColumn(label: Text("Créateur")),
-                    DataColumn(label: Text("Description")),
-                    DataColumn(label: Text("Status")),
-                    DataColumn(label: Text("Ne plus archiver")),
-                  ],
-                  rows: archivedTickets
-                      .map(
-                        (element) => DataRow(
-                          cells: [
-                            DataCell(Text(element.id)),
-                            DataCell(Text(element.creator)),
-                            DataCell(Text(element.description)),
-                            DataCell(Text(element.status.name)),
-                            DataCell(
-                              ElevatedButton(
-                                onPressed: () async {},
-                                style: ElevatedButton.styleFrom(
-                                    primary: CustomTheme.colorTheme),
-                                child: Text("Ne plus archiver"),
+                            ],
+                          ),
+                        )
+                        .toList()),
+              ),
+              Obx(() => DataTable(
+                    columns: [
+                      DataColumn(label: Text("ID")),
+                      DataColumn(label: Text("Créateur")),
+                      DataColumn(label: Text("Description")),
+                      DataColumn(label: Text("Status")),
+                      DataColumn(label: Text("Ne plus archiver")),
+                    ],
+                    rows: archivedTickets
+                        .map(
+                          (element) => DataRow(
+                            cells: [
+                              DataCell(Text(element.id)),
+                              DataCell(Text(element.creator)),
+                              DataCell(Text(element.description)),
+                              DataCell(Text(element.status.name)),
+                              DataCell(
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      Ticket newTicket = await Network().editTicket(
+                                          TicketStatus.Waiting, element.id);
+                                      waitingTickets.add(newTicket);
+                                      archivedTickets.remove(element);
+                                    } catch (e) {
+                                      return;
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      primary: CustomTheme.colorTheme),
+                                  child: Text("Ne plus archiver"),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                      .toList())
+                            ],
+                          ),
+                        )
+                        .toList()),
+              )
             ]),
           ),
-        )
       ],
     );
   }

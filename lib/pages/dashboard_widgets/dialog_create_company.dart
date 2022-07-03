@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -121,8 +120,8 @@ Widget dialogCreateCompany(BuildContext context) {
                       await FirebaseStorage.instance
                           .ref("companiesImages/$filename")
                           .putData(image.value!, SettableMetadata(contentType: 'image/jpeg'),);
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop(true);
+                      Get.back();
+                      Get.back(result: true);
                     } catch (e) {
                       Navigator.pop(context);
                       Get.defaultDialog(

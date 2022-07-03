@@ -45,13 +45,11 @@ class Network {
         ResponseModel.fromJson(jsonDecode(response.body));
     if (response.statusCode == 202 || response.statusCode == 400) {
       if (responseModel.errors.isNotEmpty) {
-        print(responseModel.errors[0].error);
         throw (responseModel.errors[0].error);
       }
 
       return responseModel;
     } else {
-      print(responseModel.errors[0].error);
       throw (responseModel.errors[0].error);
     }
   }
@@ -486,10 +484,10 @@ class Network {
         if (result['status'] == 'OK') {
           final googleResponse = GoogleMapsResponsePrediction.fromJson(result);
           List<Suggestion> suggestions = [];
-          googleResponse.predictions.forEach((element) {
+          for (var element in googleResponse.predictions) {
             suggestions
                 .add(Suggestion(element["place_id"], element["description"]));
-          });
+          }
           return suggestions;
         }
         if (result['status'] == 'ZERO_RESULTS') {

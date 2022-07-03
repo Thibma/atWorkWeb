@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:my_office_desktop/main.dart';
 import 'package:my_office_desktop/services/authentication.dart';
 
 import '../../theme.dart';

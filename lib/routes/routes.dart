@@ -38,7 +38,6 @@ class Routes {
 
     router.notFoundHandler = Handler(
         handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
-      print("null");
       return ErrorPage();
     });
   }

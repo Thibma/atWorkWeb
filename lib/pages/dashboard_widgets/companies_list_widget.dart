@@ -5,7 +5,6 @@ import 'package:my_office_desktop/pages/widgets/textfield.dart';
 import 'package:my_office_desktop/theme.dart';
 import '../../models/company.dart';
 import '../../services/network.dart';
-import '../dashboard_admin_page.dart';
 import 'package:my_office_desktop/pages/widgets/company_card.dart';
 
 class CompaniesList extends StatelessWidget {

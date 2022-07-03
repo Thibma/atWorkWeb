@@ -1,16 +1,21 @@
-# my_office_desktop
+# Site Web d'AtWork
 
-A new Flutter project.
+[Clickez ici pour accéder au site Web]()
 
-## Getting Started
+## Installation
 
-This project is a starting point for a Flutter application.
+### Prérequis
+* [Flutter](https://flutter.dev/)
+* [Python 3](https://www.python.org/downloads/)
 
-A few resources to get you started if this is your first Flutter project:
+### Commandes en local
+```
+flutter build web --web-renderer html
+cd build/web
+python3 -m http.server 8000
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Crédits
+* Thibault BALSAMO
+* Sophie PELLUET
+* Dmytro Llutsyk

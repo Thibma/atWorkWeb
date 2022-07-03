@@ -1,9 +1,7 @@
-import 'package:meta/meta.dart';
-
 import '../utils/utils.dart';
 
 class UserFirestoreField {
-  static final String lastMessageTime = 'lastMessageTime';
+  static String lastMessageTime = 'lastMessageTime';
 }
 
 class UserFirestore {
@@ -11,7 +9,7 @@ class UserFirestore {
   final String? name;
   final DateTime? lastMessageTime;
 
-  const UserFirestore.UserFirebase({
+  const UserFirestore.userFirebase({
     this.idUser,
     this.name,
     this.lastMessageTime,
@@ -23,14 +21,14 @@ class UserFirestore {
     String? urlAvatar,
     DateTime? lastMessageTime,
   }) =>
-      UserFirestore.UserFirebase(
+      UserFirestore.userFirebase(
         idUser: idUser,
         name: name ?? this.name,
         lastMessageTime: lastMessageTime ?? this.lastMessageTime,
       );
 
   static UserFirestore fromJson(Map<String, dynamic> json) =>
-      UserFirestore.UserFirebase(
+      UserFirestore.userFirebase(
         idUser: json['idUser'],
         name: json['name'],
         lastMessageTime: Utils.toDateTime(json['lastMessageTime']),

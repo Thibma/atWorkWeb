@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,12 +14,10 @@ import 'package:my_office_desktop/services/network.dart';
 import 'package:my_office_desktop/theme.dart';
 import 'package:get/get.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../models/company.dart';
 import '../../models/service.dart';
 import '../../models/user.dart';
-import '../../services/place_api.dart';
 
 class DialogCreateUser extends StatefulWidget {
   DialogCreateUser({
@@ -64,7 +61,6 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
 
   void changed(String search) {
     query.value = search;
-    print(query.value);
   }
 
   @override
@@ -329,9 +325,8 @@ class _DialogCreateUserState extends State<DialogCreateUser> {
 
                             final refUsers =
                                 FirebaseFirestore.instance.collection('users');
-                            final allUsers = await refUsers.get();
                             final userDoc = refUsers.doc(firebaseUser.uid);
-                            final newUser = UserFirestore.UserFirebase(
+                            final newUser = UserFirestore.userFirebase(
                                 idUser: firebaseUser.uid,
                                 name: "${user.firstname} ${user.lastname}",
                                 lastMessageTime: DateTime.now());

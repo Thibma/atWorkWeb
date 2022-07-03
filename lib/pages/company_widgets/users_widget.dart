@@ -4,7 +4,6 @@ import 'package:my_office_desktop/models/service.dart';
 
 import 'package:my_office_desktop/models/user.dart';
 import 'package:my_office_desktop/pages/company_widgets/dialog_create_user.dart';
-import 'package:my_office_desktop/pages/company_widgets/dialog_edit_unit.dart';
 import 'package:my_office_desktop/pages/company_widgets/dialog_edit_user.dart';
 import 'package:my_office_desktop/services/authentication.dart';
 

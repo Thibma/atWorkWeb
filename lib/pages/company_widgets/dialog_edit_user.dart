@@ -1,24 +1,19 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/models/unit.dart';
 import 'package:my_office_desktop/models/user.dart';
 import 'package:my_office_desktop/pages/widgets/dialog_waiting.dart';
 import 'package:my_office_desktop/pages/widgets/textfield.dart';
-import 'package:my_office_desktop/services/authentication.dart';
 import 'package:my_office_desktop/services/network.dart';
 import 'package:my_office_desktop/theme.dart';
 import 'package:get/get.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../models/company.dart';
 import '../../models/service.dart';
-import '../../services/place_api.dart';
 
 class DialogEditUser extends StatefulWidget {
   DialogEditUser({
@@ -64,7 +59,6 @@ class _DialogCreateUserState extends State<DialogEditUser> {
 
   void changed(String search) {
     query.value = search;
-    print(query.value);
   }
 
   Future<String> loadImage() async {

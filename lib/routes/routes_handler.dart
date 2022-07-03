@@ -1,6 +1,5 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:my_office_desktop/main.dart';
 import 'package:my_office_desktop/models/role.dart';
 import 'package:my_office_desktop/pages/dashboard_admin_page.dart';
@@ -216,11 +215,11 @@ Future<bool> userVerification(String companyId) async {
       await Network().getUserCompanies(Authentication.connectedUser!.id);
 
   bool result = false;
-  companies.forEach((element) {
+  for (var element in companies) {
     if (element.id == companyId) {
       result = true;
     }
-  });
+  }
 
   return result;
 }

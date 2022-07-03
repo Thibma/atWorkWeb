@@ -29,9 +29,9 @@ class ConnectedUser {
   String serviceNames() {
     String result = "";
 
-    services.forEach((element) {
+    for (var element in services) {
       result += "${element.name} ";
-    });
+    }
 
     return result == "" ? "Aucun services" : result;
   }

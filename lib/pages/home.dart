@@ -301,7 +301,6 @@ class HeaderHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
     return ResponsiveWidget.isSmallScreen(context)
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,

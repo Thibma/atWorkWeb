@@ -3,9 +3,7 @@ import 'package:get/get.dart';
 import 'package:my_office_desktop/models/door.dart';
 import 'package:my_office_desktop/models/unit.dart';
 import 'package:my_office_desktop/pages/company_widgets/dialog_create_door.dart';
-import 'package:my_office_desktop/pages/company_widgets/dialog_create_unit.dart';
 import 'package:my_office_desktop/pages/company_widgets/dialog_edit_door.dart';
-import 'package:my_office_desktop/pages/widgets/unit_card.dart';
 
 import '../../models/company.dart';
 import '../../services/network.dart';

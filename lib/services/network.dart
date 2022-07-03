@@ -382,7 +382,7 @@ class Network {
   }
 
   // Créer une unité
-  Future<Door> createDoor(String tag, DoorStatus status, String unitId) async {
+  Future<Door> createDoor(String tag, DoorStatus status, String unitId, String url) async {
     try {
       final response = await http.post(Uri.parse("${address}doors"),
           headers: apiTokenPost,
@@ -390,6 +390,7 @@ class Network {
             'tag': tag,
             'status': status.name,
             'unit': unitId,
+            'url': url,
           }));
 
       try {
@@ -403,7 +404,7 @@ class Network {
   }
 
   Future<Door> editDoor(
-      String? tag, DoorStatus? status, String? unitId, String doorId) async {
+      String? tag, DoorStatus? status, String? unitId, String? url, String doorId) async {
     Map<String, dynamic> body = {};
     if (tag != null) {
       body["tag"] = tag;
@@ -413,6 +414,9 @@ class Network {
     }
     if (unitId != null) {
       body["unit"] = unitId;
+    }
+    if (url != null) {
+      body["url"] = url;
     }
     try {
       final response = await http.put(Uri.parse("${address}doors/$doorId"),

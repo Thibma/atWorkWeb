@@ -6,15 +6,17 @@ class Door {
   final DoorStatus status;
   final String tag;
   final Unit unit;
+  final String url;
 
   Door({
     required this.id,
     required this.status,
     required this.tag,
-    required this.unit
+    required this.unit,
+    required this.url,
   });
 
   factory Door.fromJson(Map<String, dynamic> json) {
-    return Door(id: json['_id'], status: DoorStatus.values.byName(json['status']), tag: json['tag'], unit: Unit.fromJson(json['unit']));
+    return Door(id: json['_id'], status: DoorStatus.values.byName(json['status']), tag: json['tag'], unit: Unit.fromJson(json['unit']), url: json['url']);
   }
 }

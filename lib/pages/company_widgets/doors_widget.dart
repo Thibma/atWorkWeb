@@ -161,6 +161,7 @@ class _DoorListDoneState extends State<DoorListDone> {
                 columns: [
                   DataColumn(label: Text("ID")),
                   DataColumn(label: Text("Tag")),
+                  DataColumn(label: Text("Adresse IP")),
                   DataColumn(label: Text("Status")),
                   DataColumn(label: Text("Localisation")),
                   DataColumn(label: Text("Modifier")),
@@ -173,6 +174,7 @@ class _DoorListDoneState extends State<DoorListDone> {
                             cells: [
                               DataCell(Text(element.id)),
                               DataCell(Text(element.tag)),
+                              DataCell(Text(element.url)),
                               DataCell(Text(element.status.name)),
                               DataCell(Text(element.unit.name)),
                               DataCell(
@@ -250,6 +252,7 @@ class _DoorListDoneState extends State<DoorListDone> {
                             cells: [
                               DataCell(Text(element.id)),
                               DataCell(Text(element.tag)),
+                              DataCell(Text(element.url)),
                               DataCell(Text(element.status.name)),
                               DataCell(Text(element.unit.name)),
                               DataCell(

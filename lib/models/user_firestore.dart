@@ -37,7 +37,7 @@ class UserFirestore {
       );
 
   Map<String, dynamic> toJson() => {
-        'idUserFirestore': idUser,
+        'idUser': idUser,
         'name': name,
         'lastMessageTime': Utils.fromDateTimeToJson(lastMessageTime),
       };

@@ -21,6 +21,7 @@ class DialogCreateDoor extends StatelessWidget {
       : super(key: key);
 
   final TextEditingController tagEditingController = TextEditingController();
+  final TextEditingController urlEditingController = TextEditingController();
 
   final error = RxBool(false);
   RxString query = RxString('');
@@ -147,6 +148,13 @@ class DialogCreateDoor extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TextFieldApp(
+                      hint: "URL de la serrure *",
+                      icon: Icons.link,
+                      controller: urlEditingController),
                   Obx(
                     () => Visibility(
                       visible: error.value,
@@ -173,7 +181,7 @@ class DialogCreateDoor extends StatelessWidget {
                         onPressed: () async {
                           if (tagEditingController.text.isEmpty ||
                               doorStatus == null ||
-                              selectedUnit == null) {
+                              selectedUnit == null || urlEditingController.text.isEmpty) {
                             error.value = true;
                             return;
                           }
@@ -184,7 +192,8 @@ class DialogCreateDoor extends StatelessWidget {
                             await Network().createDoor(
                                 tagEditingController.text,
                                 doorStatus!,
-                                selectedUnit!.id);
+                                selectedUnit!.id,
+                                urlEditingController.text);
                             Get.back();
                             Get.back(result: true);
                           } catch (e) {

@@ -93,9 +93,13 @@ class ExpandedImage extends StatelessWidget {
       alignment: Alignment.center,
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        child: Image.asset(
-          "assets/web/screen.jpg",
-          width: 350,
+        child: Column(
+          children: [
+            Image.asset(
+            "assets/web/screen1.jpg",
+            width: 350,
+          ),
+          ], 
         ),
       ),
     );
@@ -257,29 +261,23 @@ class ExpandedText extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(
-              left: screenSize.width / 15, right: screenSize.width / 15),
+              left: screenSize.width / 8, right: screenSize.width / 8),
           child: Row(
             children: [
               MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: GestureDetector(
-                    onTap: () {
-                      js.context.callMethod('open', [
-                        "https://play.google.com/store/apps/details?id=com.myoffice.esgi.myoffice"
-                      ]);
-                    },
-                    child: Image.asset(
-                      "assets/web/google_play.png",
-                      width: 200,
-                    )),
+                  onTap: () {
+                    js.context.callMethod('open', [
+                      "https://play.google.com/store/apps/details?id=com.myoffice.esgi.myoffice"
+                    ]);
+                  },
+                  child: Image.asset(
+                    "assets/web/google_play.png",
+                    width: 200,
+                  ),
+                ),
               ),
-              SizedBox(
-                width: screenSize.width / 50,
-              ),
-              Image.asset(
-                "assets/web/apple_store.png",
-                width: 200,
-              )
             ],
           ),
         ),
@@ -288,7 +286,7 @@ class ExpandedText extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(
-              left: screenSize.width / 12.5, right: screenSize.width / 12.5),
+              left: screenSize.width / 7.25, right: screenSize.width / 7.25),
           child: Image.asset("assets/web/qrcode_google.png"),
         ),
       ],

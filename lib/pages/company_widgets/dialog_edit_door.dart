@@ -35,6 +35,7 @@ class DialogEditDoor extends StatefulWidget {
 
 class _DialogEditDoorState extends State<DialogEditDoor> {
   final TextEditingController tagEditingController = TextEditingController();
+  final TextEditingController urlEditingController = TextEditingController();
 
   final error = RxBool(false);
 
@@ -63,6 +64,7 @@ class _DialogEditDoorState extends State<DialogEditDoor> {
     door = widget.door;
 
     tagEditingController.text = door.tag;
+    urlEditingController.text = door.url;
     selectedUnit = door.unit;
     doorStatus = door.status;
 
@@ -195,6 +197,13 @@ class _DialogEditDoorState extends State<DialogEditDoor> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TextFieldApp(
+                      hint: "URL de la serrure *",
+                      icon: Icons.link,
+                      controller: urlEditingController),
                   Obx(
                     () => Visibility(
                       visible: error.value,
@@ -219,7 +228,7 @@ class _DialogEditDoorState extends State<DialogEditDoor> {
                       ),
                       TextButton(
                         onPressed: () async {
-                          if (tagEditingController.text.isEmpty) {
+                          if (tagEditingController.text.isEmpty || urlEditingController.text.isEmpty) {
                             error.value = true;
                             return;
                           }
@@ -235,6 +244,9 @@ class _DialogEditDoorState extends State<DialogEditDoor> {
                                 selectedUnit.id == door.unit.id
                                     ? null
                                     : selectedUnit.id,
+                                urlEditingController.text == door.url
+                                    ? null
+                                    : urlEditingController.text,
                                 door.id);
                             Get.back();
                             Get.back(result: true);

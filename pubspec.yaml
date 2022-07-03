@@ -79,6 +79,8 @@ flutter:
     - assets/logo_home.png
     - assets/default_profile.png
     - assets/web/screen.jpg
+    - assets/web/screen1.jpg
+    - assets/web/screen2.jpg
     - assets/web/background.png
     - assets/web/google_play.png
     - assets/web/apple_store.png

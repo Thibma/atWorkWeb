@@ -96,10 +96,10 @@ class ExpandedImage extends StatelessWidget {
         child: Column(
           children: [
             Image.asset(
-            "assets/web/screen1.jpg",
-            width: 350,
-          ),
-          ], 
+              "assets/web/screen1.jpg",
+              width: 350,
+            ),
+          ],
         ),
       ),
     );
@@ -229,7 +229,7 @@ class ExpandedText extends StatelessWidget {
                   bool result = await Get.dialog(DialogCreateTicket());
                   if (result) {
                     Get.defaultDialog(
-                      title: "La demande a bien été créer.",
+                      title: "La demande a bien été créee.",
                       middleText:
                           "Vous avez reçu un mail de votre demande, elle sera traitée dans les plus brefs délais par notre équipe.",
                       contentPadding: EdgeInsets.all(20.0),

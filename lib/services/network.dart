@@ -18,7 +18,7 @@ import 'package:my_office_desktop/services/place_api.dart';
 class Network {
   // Adresse API
   //final String address = "http://10.33.3.78:8000";
-  final String address = "http://vps-e96550d9.vps.ovh.net:8082/";
+  final String address = "http://atwork.api.spell.ovh/";
 
   final Map<String, String> apiToken = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",

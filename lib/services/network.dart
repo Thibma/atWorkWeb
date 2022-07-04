@@ -23,45 +23,21 @@ class Network {
   final Map<String, String> apiToken = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
     "firebase": Authentication.getFirebaseUser()!.uid,
-    'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-    "Access-Control-Allow-Credentials":
-        "true", // Required for cookies, authorization headers with HTTPS
-    "Access-Control-Allow-Headers":
-        "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-    "Access-Control-Allow-Methods": "GET,POST, OPTIONS"
   };
 
   final Map<String, String> apiTokenPost = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
     "firebase": Authentication.getFirebaseUser()!.uid,
     "Content-Type": "application/json",
-    'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-    "Access-Control-Allow-Credentials":
-        "true", // Required for cookies, authorization headers with HTTPS
-    "Access-Control-Allow-Headers":
-        "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-    "Access-Control-Allow-Methods": "GET,POST, OPTIONS"
   };
 
   final Map<String, String> apiTokenOnlyPost = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
     "Content-Type": "application/json",
-    'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-    "Access-Control-Allow-Credentials":
-        "true", // Required for cookies, authorization headers with HTTPS
-    "Access-Control-Allow-Headers":
-        "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-    "Access-Control-Allow-Methods": "GET,POST, OPTIONS"
   };
 
   final Map<String, String> apiTokenOnly = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
-    'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-    "Access-Control-Allow-Credentials":
-        "true", // Required for cookies, authorization headers with HTTPS
-    "Access-Control-Allow-Headers":
-        "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-    "Access-Control-Allow-Methods": "GET,POST, OPTIONS"
   };
 
   ResponseModel apiResponse(http.Response response) {

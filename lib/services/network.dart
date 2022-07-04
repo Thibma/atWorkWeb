@@ -22,22 +22,46 @@ class Network {
 
   final Map<String, String> apiToken = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
-    "firebase": Authentication.getFirebaseUser()!.uid
+    "firebase": Authentication.getFirebaseUser()!.uid,
+    'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+    "Access-Control-Allow-Credentials":
+        "true", // Required for cookies, authorization headers with HTTPS
+    "Access-Control-Allow-Headers":
+        "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+    "Access-Control-Allow-Methods": "GET,POST, OPTIONS"
   };
 
   final Map<String, String> apiTokenPost = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
     "firebase": Authentication.getFirebaseUser()!.uid,
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+    "Access-Control-Allow-Credentials":
+        "true", // Required for cookies, authorization headers with HTTPS
+    "Access-Control-Allow-Headers":
+        "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+    "Access-Control-Allow-Methods": "GET,POST, OPTIONS"
   };
 
   final Map<String, String> apiTokenOnlyPost = {
     "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+    "Access-Control-Allow-Credentials":
+        "true", // Required for cookies, authorization headers with HTTPS
+    "Access-Control-Allow-Headers":
+        "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+    "Access-Control-Allow-Methods": "GET,POST, OPTIONS"
   };
 
   final Map<String, String> apiTokenOnly = {
-    "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8"
+    "api-token": "urHkArjloX6kRrNJOrUCIOi8N2tZbRu8",
+    'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+    "Access-Control-Allow-Credentials":
+        "true", // Required for cookies, authorization headers with HTTPS
+    "Access-Control-Allow-Headers":
+        "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+    "Access-Control-Allow-Methods": "GET,POST, OPTIONS"
   };
 
   ResponseModel apiResponse(http.Response response) {
@@ -380,7 +404,8 @@ class Network {
   }
 
   // Créer une unité
-  Future<Door> createDoor(String tag, DoorStatus status, String unitId, String url) async {
+  Future<Door> createDoor(
+      String tag, DoorStatus status, String unitId, String url) async {
     try {
       final response = await http.post(Uri.parse("${address}doors"),
           headers: apiTokenPost,
@@ -401,8 +426,8 @@ class Network {
     }
   }
 
-  Future<Door> editDoor(
-      String? tag, DoorStatus? status, String? unitId, String? url, String doorId) async {
+  Future<Door> editDoor(String? tag, DoorStatus? status, String? unitId,
+      String? url, String doorId) async {
     Map<String, dynamic> body = {};
     if (tag != null) {
       body["tag"] = tag;
@@ -618,9 +643,8 @@ class Network {
   Future<Ticket> editTicket(TicketStatus ticketStatus, String ticketId) async {
     try {
       final response = await http.put(Uri.parse("${address}tickets/$ticketId"),
-          headers: apiTokenPost, body: jsonEncode(<String, String> {
-            'status': ticketStatus.name
-          }));
+          headers: apiTokenPost,
+          body: jsonEncode(<String, String>{'status': ticketStatus.name}));
 
       try {
         return Ticket.fromJson(apiResponse(response).content);
@@ -631,5 +655,4 @@ class Network {
       rethrow;
     }
   }
-
 }
